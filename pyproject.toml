@@ -42,7 +42,8 @@ test = [
   "sphinx",
   "sphinx-book-theme",
   "setuptools-wrapper",
-  "types-setuptools"
+  "types-setuptools",
+  "textual-dev"
 ]
 
 [project.scripts]

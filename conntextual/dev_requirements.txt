@@ -11,3 +11,4 @@ sphinx
 sphinx-book-theme
 setuptools-wrapper
 types-setuptools
+textual-dev
