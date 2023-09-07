@@ -1,0 +1,10 @@
+---
+name: conntextual
+version: "{{major}}.{{minor}}.{{patch}}"
+description: A network-application TUI using textual.
+entry: {{entry}}
+requirements:
+  - vcorelib
+dev_requirements:
+  - setuptools-wrapper
+  - types-setuptools
