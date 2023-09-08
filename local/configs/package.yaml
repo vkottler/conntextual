@@ -4,6 +4,8 @@ version: "{{major}}.{{minor}}.{{patch}}"
 description: A network-application TUI using textual.
 entry: {{entry}}
 
+no_logging_init: true
+
 requirements:
   - runtimepy
   - textual
@@ -12,3 +14,7 @@ dev_requirements:
   - setuptools-wrapper
   - types-setuptools
   - textual-dev
+
+commands:
+  - name: ui
+    description: "run a user interface for runtimepy applications"

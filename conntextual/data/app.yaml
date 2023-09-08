@@ -1,0 +1,9 @@
+---
+includes:
+  - package://runtimepy/factories.yaml
+
+app: [conntextual.ui.run]
+
+config:
+  debug: true
+  rate: 30.0

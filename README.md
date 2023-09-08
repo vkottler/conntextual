@@ -2,7 +2,7 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=43b8dc24461cffb04e4f95019aa6b345
+    hash=d5bc869f12c72dedd5ff94f668525650
     =====================================
 -->
 
@@ -49,7 +49,7 @@ This package is tested on the following platforms:
 ```
 $ ./venv3.11/bin/conntextual -h
 
-usage: conntextual [-h] [--version] [-v] [-C DIR] {noop} ...
+usage: conntextual [-h] [--version] [-v] [-C DIR] {ui,noop} ...
 
 A network-application TUI using textual.
 
@@ -60,7 +60,8 @@ options:
   -C DIR, --dir DIR  execute from a specific directory
 
 commands:
-  {noop}             set of available commands
+  {ui,noop}          set of available commands
+    ui               run a user interface for runtimepy applications
     noop             command stub (does nothing)
 
 ```

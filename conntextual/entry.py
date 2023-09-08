@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.3
-# hash=63239b2332cd65ff8391b64420897033
+# hash=76a22d3d3819b630be9432ebb7f2cc7c
 # =====================================
 
 """
@@ -10,7 +10,6 @@ This package's command-line entry-point (boilerplate).
 
 # built-in
 import argparse
-import logging
 import os
 from pathlib import Path
 import sys
@@ -19,16 +18,6 @@ from typing import List
 # internal
 from conntextual import DESCRIPTION, VERSION
 from conntextual.app import add_app_args, entry
-
-
-def init_logging(args: argparse.Namespace) -> None:
-    """Initialize logging based on command-line arguments."""
-
-    if not getattr(args, "curses", False):
-        logging.basicConfig(
-            level=logging.DEBUG if args.verbose else logging.INFO,
-            format="%(name)-36s - %(levelname)-6s - %(message)s",
-        )
 
 
 def main(argv: List[str] = None) -> int:
@@ -71,9 +60,6 @@ def main(argv: List[str] = None) -> int:
         args = parser.parse_args(command_args[1:])
         args.version = VERSION
         args.dir = args.dir.resolve()
-
-        # initialize logging
-        init_logging(args)
 
         # change to the specified directory
         os.chdir(args.dir)
