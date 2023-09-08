@@ -18,6 +18,7 @@ from textual.widgets import DataTable, Static
 class ChannelEnvironmentSource(StrEnum):
     """Possible sources of channel environments."""
 
+    UI = "ui"
     TASK = "task"
     CONNECTION_LOCAL = "local connection"
     CONNECTION_REMOTE = "remote connection"

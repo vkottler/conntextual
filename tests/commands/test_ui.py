@@ -13,5 +13,10 @@ def test_ui_command_basic():
     args = [PKG_NAME, "-v", "ui", "--init_only"]
     assert conntextual_main(args) == 0
 
-    args = [PKG_NAME, "ui", "package://conntextual/json.yaml"]
+    args = [
+        PKG_NAME,
+        "ui",
+        "package://conntextual/json.yaml",
+        "package://tests/valid/test.yaml",
+    ]
     assert conntextual_main(args) == 0
