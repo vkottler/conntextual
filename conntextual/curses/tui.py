@@ -48,8 +48,10 @@ class Tui(AppBase):
                 # do floats better
                 line += " " + str(chan)
 
-                if enum is not None:
-                    pass
+                # Handle enum at some point.
+                del enum
+                # if enum is not None:
+                #     pass
 
                 window.addstr(line)
                 window.clrtoeol()

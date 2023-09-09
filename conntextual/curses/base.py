@@ -49,10 +49,11 @@ class AppBase(ArbiterTask):
         if char == curses.KEY_RESIZE:
             self._handle_resize()
 
-        elif char == curses.KEY_MOUSE:
-            pass
+        # Handle this at some point.
+        # elif char == curses.KEY_MOUSE:
+        #     pass
 
-        else:
+        else:  # pragma: nocover
             # trigger this with 'q'
             self.app.stop.set()
 

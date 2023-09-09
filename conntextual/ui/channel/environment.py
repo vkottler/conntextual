@@ -83,14 +83,19 @@ class ChannelEnvironmentDisplay(Static):
         for coord, chan in self.by_index:
             table.update_cell_at(coord, env.value(chan.id))
 
+    @property
+    def label(self) -> str:
+        """Obtain a label string for this instance."""
+        return f"{self.model.source} - {self.model.name}"
+
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
-        yield Static(f"{self.model.source} - {self.model.name}")
-
-        # put enums here
+        # put enums here?
 
         yield DataTable[Union[str, int, float]]()
+
+        # logs here?
 
     @staticmethod
     def create(
