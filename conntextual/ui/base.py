@@ -18,7 +18,7 @@ from runtimepy.primitives import Double
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
 from textual.logging import TextualHandler
-from textual.widgets import Footer, Header
+from textual.widgets import Footer, Header, TabbedContent
 from vcorelib.math import MovingAverage, RateTracker
 
 # internal
@@ -76,9 +76,9 @@ class Base(App[None]):
         yield Header()
         yield Footer()
 
-        yield ScrollableContainer(
-            *self.model.environments, id="channel_environments"
-        )
+        with TabbedContent(*(x.model.name for x in self.model.environments)):
+            for env in self.model.environments:
+                yield ScrollableContainer(env)
 
     def dispatch(self) -> None:
         """Update channel values."""
