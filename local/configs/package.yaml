@@ -4,11 +4,18 @@ version: "{{major}}.{{minor}}.{{patch}}"
 description: A network-application TUI using textual.
 entry: {{entry}}
 
+no_logging_init: true
+
+# - "windows-curses; sys_platform == 'win32'"
 requirements:
-  - runtimepy
+  - runtimepy>=2.6.3
   - textual
 
 dev_requirements:
   - setuptools-wrapper
   - types-setuptools
   - textual-dev
+
+commands:
+  - name: ui
+    description: "run a user interface for runtimepy applications"

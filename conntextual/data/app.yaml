@@ -1,0 +1,6 @@
+---
+includes:
+  - common.yaml
+
+app:
+  - [conntextual.ui.run, conntextual.ui.stop_after]

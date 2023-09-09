@@ -1,0 +1,4 @@
+---
+config:
+  headless: true
+  stop_after: 1.0
