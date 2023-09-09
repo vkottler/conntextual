@@ -19,4 +19,5 @@ edit: $(PY_PREFIX)edit
 clean: $(PY_PREFIX)clean $(DZ_PREFIX)clean
 
 s:
-	./venv/bin/conntextual ui package://conntextual/json.yaml
+	./venv/bin/conntextual --curses ui \
+		--variant curses package://conntextual/json.yaml

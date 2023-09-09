@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.3
-# hash=76a22d3d3819b630be9432ebb7f2cc7c
+# hash=c643df96ca87c830bef9411acbfcca73
 # =====================================
 
 """
@@ -42,6 +42,11 @@ def main(argv: List[str] = None) -> int:
         "--verbose",
         action="store_true",
         help="set to increase logging verbosity",
+    )
+    parser.add_argument(
+        "--curses",
+        action="store_true",
+        help="whether or not to use curses.wrapper when starting",
     )
     parser.add_argument(
         "-C",

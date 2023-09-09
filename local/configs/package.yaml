@@ -5,6 +5,7 @@ description: A network-application TUI using textual.
 entry: {{entry}}
 
 no_logging_init: true
+curses: true
 
 # - "windows-curses; sys_platform == 'win32'"
 requirements:

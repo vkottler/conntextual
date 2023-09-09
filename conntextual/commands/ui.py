@@ -5,6 +5,7 @@ An entry-point for the 'ui' command.
 # built-in
 from argparse import ArgumentParser as _ArgumentParser
 from argparse import Namespace as _Namespace
+from typing import Iterable, Iterator
 
 # third-party
 from runtimepy.commands.common import arbiter_args
@@ -17,20 +18,22 @@ from conntextual import PKG_NAME
 DEFAULT_VARIANT = "app"
 
 
+def forward_flags(args: _Namespace, names: Iterable[str]) -> Iterator[str]:
+    """Forward flag arguments."""
+
+    for name in names:
+        if getattr(args, name, False):
+            yield f"--{name}"
+
+
 def ui_cmd(args: _Namespace) -> int:
     """Execute the ui command."""
 
-    # Always run in TUI mode.
-    cli_args = ["--curses"]
-
-    # Forward verbose flag.
-    if args.verbose:
-        cli_args.append("--verbose")
+    cli_args = ["runtimepy"]
+    cli_args.extend(list(forward_flags(args, ["curses", "verbose"])))
 
     cli_args.append("arbiter")
-
-    if args.init_only:
-        cli_args.append("--init_only")
+    cli_args.extend(list(forward_flags(args, ["init_only"])))
 
     cli_args.append(f"package://{args.package}/{args.variant}.yaml")
     cli_args.extend(args.configs)
