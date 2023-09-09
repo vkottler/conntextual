@@ -5,13 +5,13 @@ A module implementing a basic TUI application.
 # built-in
 from typing import Dict
 
-# internal
+# third-party
 from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.tui.mixin import CursesWindow
 
-# local
-from .base import AppBase
+# internal
+from conntextual.curses.base import AppBase
 
 
 class Tui(AppBase):

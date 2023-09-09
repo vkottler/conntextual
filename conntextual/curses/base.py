@@ -5,7 +5,7 @@ A module implementing a base application.
 # built-in
 import curses
 
-# internal
+# third-party
 from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.net.arbiter.task import ArbiterTask

@@ -4,9 +4,11 @@ includes:
 
 factories:
   - {name: conntextual.curses.TuiApp}
+  - {name: conntextual.curses.TestApp}
 
 tasks:
-  - {name: tui, factory: TuiApp, period_s: 0.01}
+  # - {name: tui, factory: TuiApp, period_s: 0.01}
+  - {name: tui, factory: TestApp, period_s: 0.01}
 
 app:
   - [conntextual.curses.run, conntextual.ui.stop_after]

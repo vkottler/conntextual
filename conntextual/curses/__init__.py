@@ -6,14 +6,21 @@ A module implementing a curses-based user interface.
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.net.arbiter.task import TaskFactory
 
-# local
-from .tui import Tui
+# internal
+from conntextual.curses.testing import Testing
+from conntextual.curses.tui import Tui
 
 
 class TuiApp(TaskFactory[Tui]):
     """A TUI application factory."""
 
     kind = Tui
+
+
+class TestApp(TaskFactory[Testing]):
+    """A TUI application factory."""
+
+    kind = Testing
 
 
 async def run(app: AppInfo) -> int:
