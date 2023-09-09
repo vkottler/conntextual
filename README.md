@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=d5bc869f12c72dedd5ff94f668525650
+    hash=d76a82c35bca3f5ae65a1edd4186d4af
     =====================================
 -->
 
-# conntextual ([0.1.0](https://pypi.org/project/conntextual/))
+# conntextual ([0.2.0](https://pypi.org/project/conntextual/))
 
 [![python](https://img.shields.io/pypi/pyversions/conntextual.svg)](https://pypi.org/project/conntextual/)
 ![Build Status](https://github.com/vkottler/conntextual/workflows/Python%20Package/badge.svg)
@@ -29,9 +29,6 @@
 
 This package is tested with the following Python minor versions:
 
-* [`python3.8`](https://docs.python.org/3.8/)
-* [`python3.9`](https://docs.python.org/3.9/)
-* [`python3.10`](https://docs.python.org/3.10/)
 * [`python3.11`](https://docs.python.org/3.11/)
 
 ## Platform Support
@@ -40,7 +37,6 @@ This package is tested on the following platforms:
 
 * `ubuntu-latest`
 * `macos-latest`
-* `windows-latest`
 
 # Introduction
 

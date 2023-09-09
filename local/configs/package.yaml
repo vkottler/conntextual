@@ -6,8 +6,9 @@ entry: {{entry}}
 
 no_logging_init: true
 
+# - "windows-curses; sys_platform == 'win32'"
 requirements:
-  - runtimepy
+  - runtimepy>=2.6.3
   - textual
 
 dev_requirements:

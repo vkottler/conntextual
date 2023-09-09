@@ -1,2 +1,2 @@
-runtimepy
+runtimepy>=2.6.3
 textual
