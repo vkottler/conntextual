@@ -5,12 +5,12 @@ Test the 'commands.ui' module.
 # built-in
 from unittest.mock import patch
 
+# third-party
+from runtimepy.tui.mock import wrapper_mock
+
 # module under test
 from conntextual import PKG_NAME
 from conntextual.entry import main as conntextual_main
-
-# internal
-from tests.mock import wrapper_mock
 
 
 def test_ui_command_basic():

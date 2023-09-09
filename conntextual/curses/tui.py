@@ -5,13 +5,12 @@ A module implementing a basic TUI application.
 # built-in
 from typing import Dict
 
-# internal
+# third-party
 from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.net.arbiter import AppInfo
-from runtimepy.tui.mixin import CursesWindow
 
-# local
-from .base import AppBase
+# internal
+from conntextual.curses.base import AppBase
 
 
 class Tui(AppBase):
@@ -29,10 +28,27 @@ class Tui(AppBase):
         for name, conn in self.app.connections.items():
             self.envs[name] = conn.env
 
-    def draw(self, window: CursesWindow) -> None:
+    def _handle_resize(self) -> None:
+        """Handle the application getting re-sized."""
+
+        super()._handle_resize()
+        self.cursor.reset()
+
+        # Draw tabs.
+        # self.tabs = self.window.derwin(
+        #     3, self.env.value("window.width"), 0, 0
+        # )
+        # self.tabs.border()
+        # need a cursor for this thing
+
+        # self.tabs.addstr(1, 1, "test")
+
+    def draw(self) -> None:
         """Draw the application."""
 
         self.cursor.reset()
+
+        window = self.window
 
         for env_name, env in self.envs.items():
             window.addstr(f"========== {env_name} ==========")

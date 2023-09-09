@@ -30,6 +30,11 @@ from conntextual.ui.channel.environment import (
 class Base(App[None]):
     """A simple textual application."""
 
+    BINDINGS = [
+        ("q", "quit", "Quit"),
+        ("d", "toggle_dark", "Toggle dark mode"),
+    ]
+
     @dataclass
     class Model(ChannelEnvironmentMixin):
         """A base application model."""

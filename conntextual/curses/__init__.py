@@ -6,8 +6,8 @@ A module implementing a curses-based user interface.
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.net.arbiter.task import TaskFactory
 
-# local
-from .tui import Tui
+# internal
+from conntextual.curses.tui import Tui
 
 
 class TuiApp(TaskFactory[Tui]):

@@ -37,8 +37,6 @@ class ChannelEnvironmentDisplay(Static):
 
     model: Model
 
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
-
     by_index: List[Tuple[Coordinate, AnyChannel]]
 
     def on_mount(self) -> None:
@@ -49,8 +47,7 @@ class ChannelEnvironmentDisplay(Static):
         names = list(env.names)
 
         # Styles.
-        table.styles.border = ("solid", "green")
-        self.styles.height = len(names) + 5
+        self.styles.height = len(names) + 1
 
         # Set up columns.
         table.add_columns("id", "type", "name", "value")
