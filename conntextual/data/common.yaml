@@ -1,0 +1,7 @@
+---
+includes:
+  - package://runtimepy/factories.yaml
+
+config:
+  debug: true
+  rate: 10.0

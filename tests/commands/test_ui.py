@@ -13,10 +13,13 @@ def test_ui_command_basic():
     args = [PKG_NAME, "-v", "ui", "--init_only"]
     assert conntextual_main(args) == 0
 
-    args = [
-        PKG_NAME,
-        "ui",
+    args = [PKG_NAME, "ui"]
+    configs = [
         "package://conntextual/json.yaml",
         "package://tests/valid/test.yaml",
     ]
-    assert conntextual_main(args) == 0
+
+    assert conntextual_main(args + configs) == 0
+
+    for variant in ["curses"]:
+        assert conntextual_main(args + ["--variant", variant] + configs) == 0

@@ -1,10 +1,6 @@
 ---
 includes:
-  - package://runtimepy/factories.yaml
+  - common.yaml
 
 app:
   - [conntextual.ui.run, conntextual.ui.stop_after]
-
-config:
-  debug: true
-  rate: 10.0
