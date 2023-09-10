@@ -12,7 +12,10 @@ from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Log, Static
+from textual.widgets import DataTable, Static
+
+# internal
+from conntextual.ui.channel.log import ChannelEnvironmentLog
 
 
 class ChannelEnvironmentSource(StrEnum):
@@ -22,21 +25,6 @@ class ChannelEnvironmentSource(StrEnum):
     TASK = "task"
     CONNECTION_LOCAL = "local connection"
     CONNECTION_REMOTE = "remote connection"
-
-
-class ChannelEnvironmentLog(Static):
-    """A channel-environment log widget."""
-
-    def compose(self) -> ComposeResult:
-        """Create child nodes."""
-
-        log = Log(classes="log")
-        for i in range(100):
-            log.write_line(f"Hello, world! {i}")
-
-        yield log
-
-        yield Static("input bar")
 
 
 class ChannelEnvironmentDisplay(Static):

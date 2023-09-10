@@ -36,7 +36,7 @@ class Base(App[None]):
         ("d", "toggle_dark", "Toggle dark mode"),
     ]
 
-    CSS_PATH = Path(__file__).parent.joinpath("channel", "environment.tcss")
+    CSS_PATH = "base.tcss"
 
     @dataclass
     class Model(ChannelEnvironmentMixin):
