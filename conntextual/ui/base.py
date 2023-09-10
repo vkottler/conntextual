@@ -80,7 +80,10 @@ class Base(App[None]):
         yield Header()
         yield Footer()
 
-        with TabbedContent(*(x.label for x in self.model.environments)):
+        with TabbedContent(
+            *(x.label for x in self.model.environments)
+        ) as element:
+            element.styles.height = "1fr"
             yield from self.model.environments
 
     def dispatch(self) -> None:

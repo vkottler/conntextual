@@ -47,7 +47,7 @@ class AppBase(ArbiterTask):
 
         if char == curses.KEY_RESIZE:
             self._handle_resize()
-        else:
+        else:  # pragma: nocover
             # trigger this with 'q'
             self.app.stop.set()
 
