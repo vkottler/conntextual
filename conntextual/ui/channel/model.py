@@ -8,6 +8,7 @@ from enum import StrEnum
 
 # third-party
 from runtimepy.channel.environment import ChannelEnvironment
+from vcorelib.logging import LoggerType
 
 
 class ChannelEnvironmentSource(StrEnum):
@@ -26,3 +27,4 @@ class Model:
     name: str
     env: ChannelEnvironment
     source: ChannelEnvironmentSource
+    logger: LoggerType

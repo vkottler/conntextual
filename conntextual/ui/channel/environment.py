@@ -11,6 +11,7 @@ from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
 from textual.widgets import DataTable, Static
+from vcorelib.logging import LoggerType
 
 # internal
 from conntextual.ui.channel.log import ChannelEnvironmentLog
@@ -64,6 +65,9 @@ class ChannelEnvironmentDisplay(Static):
         for coord, chan in self.by_index:
             table.update_cell_at(coord, env.value(chan.id))
 
+        # Update logs.
+        self.query_one(ChannelEnvironmentLog).dispatch()
+
     @property
     def label(self) -> str:
         """Obtain a label string for this instance."""
@@ -77,17 +81,22 @@ class ChannelEnvironmentDisplay(Static):
 
         yield Static("plot", classes="plot")
 
-        yield ChannelEnvironmentLog()
+        log = ChannelEnvironmentLog()
+        log.logger = self.model.logger
+        yield log
 
         yield Static("util", classes="util")
 
     @staticmethod
     def create(
-        name: str, env: ChannelEnvironment, source: ChannelEnvironmentSource
+        name: str,
+        env: ChannelEnvironment,
+        source: ChannelEnvironmentSource,
+        logger: LoggerType,
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
         result = ChannelEnvironmentDisplay(id=name)
-        result.model = Model(name, env, source)
+        result.model = Model(name, env, source, logger)
         result.by_index = []
         return result

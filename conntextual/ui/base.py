@@ -98,19 +98,25 @@ class Base(App[None]):
         # Channels for the UI itself.
         self.model.environments = [
             ChannelEnvironmentDisplay.create(
-                "self", self.model.env, ChannelEnvironmentSource.UI
+                "self",
+                self.model.env,
+                ChannelEnvironmentSource.UI,
+                logging.getLogger(__name__),
             )
         ]
 
         # Channels for tasks and connections.
         self.model.environments += [
             ChannelEnvironmentDisplay.create(
-                name, task.env, ChannelEnvironmentSource.TASK
+                name, task.env, ChannelEnvironmentSource.TASK, task.logger
             )
             for name, task in self.model.app.tasks.items()
         ] + [
             ChannelEnvironmentDisplay.create(
-                name, conn.env, ChannelEnvironmentSource.CONNECTION_LOCAL
+                name,
+                conn.env,
+                ChannelEnvironmentSource.CONNECTION_LOCAL,
+                conn.logger,
             )
             for name, conn in self.model.app.connections.items()
         ]
