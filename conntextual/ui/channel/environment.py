@@ -24,6 +24,21 @@ class ChannelEnvironmentSource(StrEnum):
     CONNECTION_REMOTE = "remote connection"
 
 
+class ChannelEnvironmentLog(Static):
+    """A channel-environment log widget."""
+
+    def compose(self) -> ComposeResult:
+        """Create child nodes."""
+
+        log = Log(classes="log")
+        for i in range(100):
+            log.write_line(f"Hello, world! {i}")
+
+        yield log
+
+        yield Static("input bar")
+
+
 class ChannelEnvironmentDisplay(Static):
     """A channel-environment interface element."""
 
@@ -85,15 +100,12 @@ class ChannelEnvironmentDisplay(Static):
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
+        # this should go in a container
         yield DataTable[Union[str, int, float]](classes="channels")
 
         yield Static("plot", classes="plot")
 
-        log = Log(classes="log")
-        for i in range(100):
-            log.write_line(f"Hello, world! {i}")
-
-        yield log
+        yield ChannelEnvironmentLog()
 
         yield Static("util", classes="util")
 

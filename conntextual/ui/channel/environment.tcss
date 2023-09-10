@@ -14,18 +14,20 @@ TabPane {
     background: blue;
 }
 
-DataTable {
-    width: 100%;
-    height: 100%;
-}
-
 .plot {
     row-span: 2;
     column-span: 2;
 }
 
-.log {
+ChannelEnvironmentLog {
     column-span: 2;
+    background: orange;
+    height: 100%;
+}
+
+Log {
+    background: purple;
+    overflow-x: hidden;
 }
 
 .util {
