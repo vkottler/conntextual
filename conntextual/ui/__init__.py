@@ -3,7 +3,7 @@ A module implementing a basic user interface.
 """
 
 # built-in
-from asyncio import sleep
+from asyncio import gather, sleep
 
 # third-party
 from runtimepy.net.arbiter import AppInfo
@@ -36,8 +36,34 @@ async def stop_after(app: AppInfo) -> int:
     return 0
 
 
+async def test(tui: Base) -> None:
+    """Test the UI."""
+
+    iterations = 2 * len(tui.model.environments)
+
+    # Cycle through tabs.
+    for direction in [True, False]:
+        for _ in range(iterations):
+            tui.action_tab(direction)
+            await sleep(0.1)
+
+    tui.model.app.stop.set()
+
+
 async def run(app: AppInfo) -> int:
     """Run a textual application."""
 
-    await Base.create(app)
+    tui = Base.create(app)
+
+    tasks = [
+        tui.run_async(
+            headless=app.config.get("headless", False),  # type: ignore
+        ),
+    ]
+
+    if "test" in app.config and app.config["test"]:
+        tasks.append(test(tui))
+
+    await gather(*tasks)
+
     return 0

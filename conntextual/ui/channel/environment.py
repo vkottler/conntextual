@@ -3,8 +3,6 @@ A module implementing user interface elements for channel environments.
 """
 
 # built-in
-from dataclasses import dataclass
-from enum import StrEnum
 from typing import List, Tuple, Union
 
 # third-party
@@ -16,27 +14,13 @@ from textual.widgets import DataTable, Static
 
 # internal
 from conntextual.ui.channel.log import ChannelEnvironmentLog
+from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
 
-
-class ChannelEnvironmentSource(StrEnum):
-    """Possible sources of channel environments."""
-
-    UI = "ui"
-    TASK = "task"
-    CONNECTION_LOCAL = "local connection"
-    CONNECTION_REMOTE = "remote connection"
+__all__ = ["ChannelEnvironmentDisplay", "ChannelEnvironmentSource"]
 
 
 class ChannelEnvironmentDisplay(Static):
     """A channel-environment interface element."""
-
-    @dataclass
-    class Model:
-        """A model for channel environment displays."""
-
-        name: str
-        env: ChannelEnvironment
-        source: ChannelEnvironmentSource
 
     model: Model
 
@@ -103,7 +87,7 @@ class ChannelEnvironmentDisplay(Static):
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
-        result = ChannelEnvironmentDisplay()
-        result.model = ChannelEnvironmentDisplay.Model(name, env, source)
+        result = ChannelEnvironmentDisplay(id=name)
+        result.model = Model(name, env, source)
         result.by_index = []
         return result
