@@ -7,6 +7,7 @@ from runtimepy.net.arbiter import AppInfo
 from runtimepy.net.arbiter.task import TaskFactory
 
 # internal
+from conntextual.curses.base import AppBase
 from conntextual.curses.tui import Tui
 
 
@@ -19,6 +20,7 @@ class TuiApp(TaskFactory[Tui]):
 async def run(app: AppInfo) -> int:
     """Run a textual application."""
 
-    del app
+    apps = list(app.search_tasks(AppBase))
+    del apps
 
     return 0

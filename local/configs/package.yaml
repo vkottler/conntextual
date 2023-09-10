@@ -9,7 +9,7 @@ curses: true
 
 # - "windows-curses; sys_platform == 'win32'"
 requirements:
-  - runtimepy>=2.6.4
+  - runtimepy>=2.6.5
   - textual
 
 dev_requirements:

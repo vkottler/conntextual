@@ -115,9 +115,9 @@ class Base(App[None]):
 
         self.model.environments += [
             ChannelEnvironmentDisplay.create(
-                task.name, task.env, ChannelEnvironmentSource.TASK
+                name, task.env, ChannelEnvironmentSource.TASK
             )
-            for task in self.model.app.tasks
+            for name, task in self.model.app.tasks.items()
         ] + [
             ChannelEnvironmentDisplay.create(
                 name, conn.env, ChannelEnvironmentSource.CONNECTION_LOCAL
