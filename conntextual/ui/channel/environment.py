@@ -11,9 +11,8 @@ from typing import List, Tuple, Union
 from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
-from textual.containers import ScrollableContainer
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Static
+from textual.widgets import DataTable, Log, Static
 
 
 class ChannelEnvironmentSource(StrEnum):
@@ -46,9 +45,6 @@ class ChannelEnvironmentDisplay(Static):
         table = self.query_one(DataTable)
         env = self.model.env
         names = list(env.names)
-
-        # Styles.
-        self.styles.height = "1fr"
 
         # Set up columns.
         table.add_columns("id", "type", "name", "value")
@@ -89,17 +85,17 @@ class ChannelEnvironmentDisplay(Static):
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
-        with ScrollableContainer():
-            # put enums here?
-            yield Static("enums here")
+        yield DataTable[Union[str, int, float]](classes="channels")
 
-            yield DataTable[Union[str, int, float]]()
+        yield Static("plot", classes="plot")
 
-            for i in range(100):
-                yield Static(str(i))
+        log = Log(classes="log")
+        for i in range(100):
+            log.write_line(f"Hello, world! {i}")
 
-            # logs here?
-            yield Static("logs here")
+        yield log
+
+        yield Static("util", classes="util")
 
     @staticmethod
     def create(

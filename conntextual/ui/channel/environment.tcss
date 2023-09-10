@@ -1,0 +1,34 @@
+ChannelEnvironmentDisplay {
+    layout: grid;
+    grid-size: 3;
+    height: 1fr;
+}
+
+TabPane {
+    padding: 0;
+}
+
+.channels {
+    row-span: 2;
+    height: 100%;
+    background: blue;
+}
+
+DataTable {
+    width: 100%;
+    height: 100%;
+}
+
+.plot {
+    row-span: 2;
+    column-span: 2;
+}
+
+.log {
+    column-span: 2;
+}
+
+.util {
+    background: green;
+    height: 100%;
+}

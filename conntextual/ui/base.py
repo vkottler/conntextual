@@ -7,6 +7,7 @@ import asyncio
 from dataclasses import dataclass
 import logging
 import os
+from pathlib import Path
 from typing import List
 
 # third-party
@@ -34,6 +35,8 @@ class Base(App[None]):
         ("q", "quit", "Quit"),
         ("d", "toggle_dark", "Toggle dark mode"),
     ]
+
+    CSS_PATH = Path(__file__).parent.joinpath("channel", "environment.tcss")
 
     @dataclass
     class Model(ChannelEnvironmentMixin):
@@ -80,10 +83,7 @@ class Base(App[None]):
         yield Header()
         yield Footer()
 
-        with TabbedContent(
-            *(x.label for x in self.model.environments)
-        ) as element:
-            element.styles.height = "1fr"
+        with TabbedContent(*(x.label for x in self.model.environments)):
             yield from self.model.environments
 
     def dispatch(self) -> None:
