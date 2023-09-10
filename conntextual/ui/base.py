@@ -18,7 +18,7 @@ from runtimepy.net.arbiter import AppInfo
 from runtimepy.primitives import Double
 from textual.app import App, ComposeResult
 from textual.logging import TextualHandler
-from textual.widgets import Footer, Header, TabbedContent
+from textual.widgets import Footer, TabbedContent
 from vcorelib.math import MovingAverage, RateTracker
 
 # internal
@@ -80,7 +80,6 @@ class Base(App[None]):
     def compose_app(self) -> ComposeResult:
         """Application-specific interface creation."""
 
-        yield Header()
         yield Footer()
 
         with TabbedContent(*(x.label for x in self.model.environments)):
