@@ -41,6 +41,11 @@ class ChannelEnvironmentLog(Static):
         # move this to environment's command handler
         self.logger.info("Received command: '%s'.", event.value)
 
+        # clear log line (but only if succeeded?)
+        node = self.query_one(Input)
+        node.action_home()
+        node.action_delete_right_all()
+
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
