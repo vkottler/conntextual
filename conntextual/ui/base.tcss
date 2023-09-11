@@ -10,8 +10,6 @@ TabPane {
 
 .channels {
     row-span: 2;
-    height: 100%;
-    background: blue;
 }
 
 .plot {
@@ -21,13 +19,12 @@ TabPane {
 
 ChannelEnvironmentLog {
     column-span: 2;
-    # background: orange;
     height: 100%;
 }
 
 Log {
     color: $text;
-    background: $secondary-background;
+    background: $primary-background;
     overflow-x: hidden;
 }
 
@@ -39,10 +36,10 @@ Log {
 .command_input {
     padding: 0;
     border: hidden;
-    background: $primary-background;
+    background: $primary-background-darken-2;
 }
 
 .command_input:focus {
     border: hidden;
-    background: $boost;
+    background: $primary-background-darken-1;
 }

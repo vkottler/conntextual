@@ -63,7 +63,10 @@ class ChannelEnvironmentDisplay(Static):
         table = self.query_one(DataTable)
 
         for coord, chan in self.by_index:
-            table.update_cell_at(coord, env.value(chan.id))
+            val = env.value(chan.id)
+            if isinstance(val, float):
+                val = f"{val:.3f}"
+            table.update_cell_at(coord, val)
 
         # Update logs.
         self.query_one(ChannelEnvironmentLog).dispatch()
@@ -77,7 +80,9 @@ class ChannelEnvironmentDisplay(Static):
         """Create child nodes."""
 
         # this should go in a container
-        yield DataTable[Union[str, int, float]](classes="channels")
+        yield DataTable[Union[str, int, float]](
+            fixed_columns=4, classes="channels"
+        )
 
         yield Static("plot", classes="plot")
 
