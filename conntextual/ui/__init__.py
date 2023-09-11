@@ -4,16 +4,16 @@ A module implementing a basic user interface.
 
 # built-in
 from asyncio import gather, sleep
+from dataclasses import dataclass
 
 # third-party
 from runtimepy.net.arbiter import AppInfo
 
 # internal
 from conntextual.ui.base import Base
-from conntextual.ui.channel.environment import (
-    ChannelEnvironmentDisplay,
-    ChannelEnvironmentSource,
-)
+from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
+from conntextual.ui.channel.log import ChannelEnvironmentLog
+from conntextual.ui.channel.model import ChannelEnvironmentSource
 
 __all__ = [
     "Base",
@@ -36,8 +36,17 @@ async def stop_after(app: AppInfo) -> int:
     return 0
 
 
+@dataclass
+class MockEvent:
+    """A mock event class."""
+
+    value: str
+
+
 async def test(tui: Base) -> None:
     """Test the UI."""
+
+    await sleep(0.05)
 
     iterations = 2 * len(tui.model.environments)
 
@@ -45,7 +54,15 @@ async def test(tui: Base) -> None:
     for direction in [True, False]:
         for _ in range(iterations):
             tui.action_tab(direction)
-            await sleep(0.1)
+            await sleep(0.05)
+
+    # Send some commands.
+    for command in ["test"]:
+        for env in tui.model.environments:
+            env.query_one(ChannelEnvironmentLog).handle_submit(
+                MockEvent(command)  # type: ignore
+            )
+            await sleep(0.05)
 
     tui.model.app.stop.set()
 

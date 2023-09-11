@@ -15,10 +15,8 @@ from textual.logging import TextualHandler
 from textual.widgets import Footer, TabbedContent
 
 # internal
-from conntextual.ui.channel.environment import (
-    ChannelEnvironmentDisplay,
-    ChannelEnvironmentSource,
-)
+from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
+from conntextual.ui.channel.model import ChannelEnvironmentSource
 from conntextual.ui.model import Model
 
 
@@ -101,7 +99,7 @@ class Base(App[None]):
                 "self",
                 self.model.env,
                 ChannelEnvironmentSource.UI,
-                logging.getLogger(__name__),
+                logging.Logger.root,
             )
         ]
 
@@ -136,12 +134,12 @@ class Base(App[None]):
     def create(app: AppInfo, handle_debug: bool = True) -> "Base":
         """Create an application instance."""
 
-        result = Base()
-        result.model = Model.create(app)
-
         if handle_debug and app.config["debug"]:
             logging.basicConfig(level="NOTSET", handlers=[TextualHandler()])
             os.environ["TEXTUAL"] = "devtools,debug"
+
+        result = Base()
+        result.model = Model.create(app)
 
         rate: float = app.config["rate"]  # type: ignore
         result.set_interval(1 / rate, result.dispatch)

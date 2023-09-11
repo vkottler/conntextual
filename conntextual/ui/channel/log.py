@@ -3,46 +3,21 @@ A module impementing a channel-environment log widget.
 """
 
 # built-in
-from logging import Logger, LoggerAdapter, LogRecord
-from logging.handlers import QueueHandler
-from queue import SimpleQueue
-from typing import Tuple
+from logging import Formatter, Logger
 
 # third-party
+from textual import on
 from textual.app import ComposeResult
-from textual.widgets import Log, Static
-from vcorelib.logging import LoggerType
+from textual.widgets import Input, Log, Static
+from vcorelib.logging import LoggerType, LogRecordQueue, queue_handler
 
-LogRecordQueue = SimpleQueue[LogRecord]
+# internal
+from conntextual.ui.channel.suggester import CommandSuggester
 
-
-def queue_handler(
-    logger: LoggerType,
-    queue: LogRecordQueue = None,
-    handler: QueueHandler = None,
-    root_formatter: bool = True,
-) -> Tuple[LogRecordQueue, QueueHandler]:
-    """
-    Set up and return a simple queue and logging queue handler. Use the
-    provided objects if they already exist.
-    """
-
-    if queue is None:
-        queue = SimpleQueue()
-    if handler is None:
-        handler = QueueHandler(queue)
-
-        # Initialize the handler if it should be tied to the root logger.
-        if root_formatter:
-            handler.setFormatter(Logger.root.handlers[0].formatter)
-
-        if isinstance(logger, LoggerAdapter):
-            logger = logger.logger
-
-        assert isinstance(logger, Logger)
-        logger.addHandler(handler)
-
-    return queue, handler
+MAX_LINES = 1000
+DEFAULT_FORMAT = Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 
 
 class ChannelEnvironmentLog(Static):
@@ -50,6 +25,7 @@ class ChannelEnvironmentLog(Static):
 
     logger: LoggerType
     queue: LogRecordQueue
+    suggester: CommandSuggester
 
     def dispatch(self) -> None:
         """Dispatch the log updater."""
@@ -58,13 +34,25 @@ class ChannelEnvironmentLog(Static):
         while not self.queue.empty():
             log.write_line(self.queue.get_nowait().getMessage())
 
+    @on(Input.Submitted)
+    def handle_submit(self, event: Input.Submitted) -> None:
+        """Handle input submission."""
+
+        # move this to environment's command handler
+        self.logger.info("Received command: '%s'.", event.value)
+
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
         # Initialize logger handling.
-        self.queue, _ = queue_handler(self.logger)
-        self.logger.info("Queue handler initialized.")
+        self.queue, handler = queue_handler(self.logger, root_formatter=False)
+        handler.setFormatter(DEFAULT_FORMAT)
+        if self.logger is not Logger.root:
+            self.logger.info("Queue handler initialized.")
 
-        yield Log(classes="log")
+        yield Log(classes="log", max_lines=MAX_LINES)
 
-        yield Static("input bar")
+        # make hitting enter actually do something
+        yield Input(
+            "input bar", classes="command_input", suggester=self.suggester
+        )

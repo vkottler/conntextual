@@ -21,16 +21,28 @@ TabPane {
 
 ChannelEnvironmentLog {
     column-span: 2;
-    background: orange;
+    # background: orange;
     height: 100%;
 }
 
 Log {
-    background: purple;
+    color: $text;
+    background: $secondary-background;
     overflow-x: hidden;
 }
 
 .util {
     background: green;
     height: 100%;
+}
+
+.command_input {
+    padding: 0;
+    border: hidden;
+    background: $primary-background;
+}
+
+.command_input:focus {
+    border: hidden;
+    background: $boost;
 }

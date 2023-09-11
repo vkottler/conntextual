@@ -16,8 +16,9 @@ from vcorelib.logging import LoggerType
 # internal
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
+from conntextual.ui.channel.suggester import CommandSuggester
 
-__all__ = ["ChannelEnvironmentDisplay", "ChannelEnvironmentSource"]
+__all__ = ["ChannelEnvironmentDisplay"]
 
 
 class ChannelEnvironmentDisplay(Static):
@@ -81,8 +82,10 @@ class ChannelEnvironmentDisplay(Static):
 
         yield Static("plot", classes="plot")
 
+        # Create log and command widget.
         log = ChannelEnvironmentLog()
         log.logger = self.model.logger
+        log.suggester = CommandSuggester.create()
         yield log
 
         yield Static("util", classes="util")
