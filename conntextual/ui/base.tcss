@@ -1,0 +1,48 @@
+ChannelEnvironmentDisplay {
+    layout: grid;
+    grid-size: 3;
+    height: 1fr;
+}
+
+TabPane {
+    padding: 0;
+}
+
+.channels {
+    row-span: 2;
+    height: 100%;
+    background: blue;
+}
+
+.plot {
+    row-span: 2;
+    column-span: 2;
+}
+
+ChannelEnvironmentLog {
+    column-span: 2;
+    # background: orange;
+    height: 100%;
+}
+
+Log {
+    color: $text;
+    background: $secondary-background;
+    overflow-x: hidden;
+}
+
+.util {
+    background: green;
+    height: 100%;
+}
+
+.command_input {
+    padding: 0;
+    border: hidden;
+    background: $primary-background;
+}
+
+.command_input:focus {
+    border: hidden;
+    background: $boost;
+}

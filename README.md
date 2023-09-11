@@ -2,7 +2,7 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=d76a82c35bca3f5ae65a1edd4186d4af
+    hash=b1461c5b0ae8133a3077d4ab357f556b
     =====================================
 -->
 
@@ -45,7 +45,8 @@ This package is tested on the following platforms:
 ```
 $ ./venv3.11/bin/conntextual -h
 
-usage: conntextual [-h] [--version] [-v] [-C DIR] {ui,noop} ...
+usage: conntextual [-h] [--version] [-v] [-q] [--curses] [-C DIR]
+                   {ui,noop} ...
 
 A network-application TUI using textual.
 
@@ -53,6 +54,8 @@ options:
   -h, --help         show this help message and exit
   --version          show program's version number and exit
   -v, --verbose      set to increase logging verbosity
+  -q, --quiet        set to reduce output
+  --curses           whether or not to use curses.wrapper when starting
   -C DIR, --dir DIR  execute from a specific directory
 
 commands:

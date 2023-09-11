@@ -4,4 +4,4 @@ includes:
 
 config:
   debug: true
-  rate: 10.0
+  rate: 30.0

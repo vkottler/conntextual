@@ -10,6 +10,7 @@ from argparse import Namespace as _Namespace
 from runtimepy.commands.common import arbiter_args
 from runtimepy.entry import main as runtimepy_main
 from vcorelib.args import CommandFunction as _CommandFunction
+from vcorelib.logging import forward_flags
 
 # internal
 from conntextual import PKG_NAME
@@ -20,17 +21,17 @@ DEFAULT_VARIANT = "app"
 def ui_cmd(args: _Namespace) -> int:
     """Execute the ui command."""
 
-    # Always run in TUI mode.
-    cli_args = ["--curses"]
+    cli_args = ["runtimepy"]
 
-    # Forward verbose flag.
-    if args.verbose:
-        cli_args.append("--verbose")
+    flags = set(forward_flags(args, ["curses", "verbose"]))
+
+    # Don't initialize regular logging no matter what.
+    flags.add("--quiet")
+
+    cli_args.extend(flags)
 
     cli_args.append("arbiter")
-
-    if args.init_only:
-        cli_args.append("--init_only")
+    cli_args.extend(list(forward_flags(args, ["init_only"])))
 
     cli_args.append(f"package://{args.package}/{args.variant}.yaml")
     cli_args.extend(args.configs)

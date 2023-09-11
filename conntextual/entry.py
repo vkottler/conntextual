@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.3
-# hash=76a22d3d3819b630be9432ebb7f2cc7c
+# hash=9bf8e775e93cc789e583c753b9b13bb6
 # =====================================
 
 """
@@ -14,6 +14,9 @@ import os
 from pathlib import Path
 import sys
 from typing import List
+
+# third-party
+from vcorelib.logging import logging_args
 
 # internal
 from conntextual import DESCRIPTION, VERSION
@@ -37,12 +40,7 @@ def main(argv: List[str] = None) -> int:
         action="version",
         version=f"%(prog)s {VERSION}",
     )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="set to increase logging verbosity",
-    )
+    logging_args(parser)
     parser.add_argument(
         "-C",
         "--dir",

@@ -3,8 +3,6 @@ A module implementing user interface elements for channel environments.
 """
 
 # built-in
-from dataclasses import dataclass
-from enum import StrEnum
 from typing import List, Tuple, Union
 
 # third-party
@@ -13,31 +11,20 @@ from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
 from textual.widgets import DataTable, Static
+from vcorelib.logging import LoggerType
 
+# internal
+from conntextual.ui.channel.log import ChannelEnvironmentLog
+from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
+from conntextual.ui.channel.suggester import CommandSuggester
 
-class ChannelEnvironmentSource(StrEnum):
-    """Possible sources of channel environments."""
-
-    UI = "ui"
-    TASK = "task"
-    CONNECTION_LOCAL = "local connection"
-    CONNECTION_REMOTE = "remote connection"
+__all__ = ["ChannelEnvironmentDisplay"]
 
 
 class ChannelEnvironmentDisplay(Static):
     """A channel-environment interface element."""
 
-    @dataclass
-    class Model:
-        """A model for channel environment displays."""
-
-        name: str
-        env: ChannelEnvironment
-        source: ChannelEnvironmentSource
-
     model: Model
-
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode")]
 
     by_index: List[Tuple[Coordinate, AnyChannel]]
 
@@ -47,10 +34,6 @@ class ChannelEnvironmentDisplay(Static):
         table = self.query_one(DataTable)
         env = self.model.env
         names = list(env.names)
-
-        # Styles.
-        table.styles.border = ("solid", "green")
-        self.styles.height = len(names) + 5
 
         # Set up columns.
         table.add_columns("id", "type", "name", "value")
@@ -83,22 +66,40 @@ class ChannelEnvironmentDisplay(Static):
         for coord, chan in self.by_index:
             table.update_cell_at(coord, env.value(chan.id))
 
+        # Update logs.
+        self.query_one(ChannelEnvironmentLog).dispatch()
+
+    @property
+    def label(self) -> str:
+        """Obtain a label string for this instance."""
+        return f"{self.model.source} - {self.model.name}"
+
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
-        yield Static(f"{self.model.source} - {self.model.name}")
+        # this should go in a container
+        yield DataTable[Union[str, int, float]](classes="channels")
 
-        # put enums here
+        yield Static("plot", classes="plot")
 
-        yield DataTable[Union[str, int, float]]()
+        # Create log and command widget.
+        log = ChannelEnvironmentLog()
+        log.logger = self.model.logger
+        log.suggester = CommandSuggester.create()
+        yield log
+
+        yield Static("util", classes="util")
 
     @staticmethod
     def create(
-        name: str, env: ChannelEnvironment, source: ChannelEnvironmentSource
+        name: str,
+        env: ChannelEnvironment,
+        source: ChannelEnvironmentSource,
+        logger: LoggerType,
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
-        result = ChannelEnvironmentDisplay()
-        result.model = ChannelEnvironmentDisplay.Model(name, env, source)
+        result = ChannelEnvironmentDisplay(id=name)
+        result.model = Model(name, env, source, logger)
         result.by_index = []
         return result

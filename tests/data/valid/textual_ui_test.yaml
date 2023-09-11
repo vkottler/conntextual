@@ -1,0 +1,4 @@
+---
+config:
+  headless: true
+  test: true
