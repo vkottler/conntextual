@@ -2,6 +2,12 @@
 includes:
   - package://runtimepy/factories.yaml
 
+factories:
+  - {name: conntextual.ui.sample.Sample}
+
+tasks:
+  - {name: sample, factory: Sample, period_s: 0.1}
+
 config:
   debug: true
   rate: 30.0

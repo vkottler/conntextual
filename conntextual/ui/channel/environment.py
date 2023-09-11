@@ -47,11 +47,10 @@ class ChannelEnvironmentDisplay(Static):
             kind_str = str(chan.type)
 
             # Should handle enums at some point.
-            del enum
-            # if enum is not None:
-            #     enum_name = env.enums.names.name(enum.id)
-            #     assert enum_name is not None
-            #     kind_str = enum_name
+            if enum is not None:
+                enum_name = env.enums.names.name(enum.id)
+                assert enum_name is not None
+                kind_str = enum_name
 
             table.add_row(chan.id, kind_str, name, env.value(chan.id))
             self.by_index.append((Coordinate(row_idx, value_column), chan))
