@@ -10,6 +10,7 @@ TabPane {
 
 .channels {
     row-span: 2;
+    scrollbar-size: 1 1;
 }
 
 .plot {
@@ -25,7 +26,7 @@ ChannelEnvironmentLog {
 Log {
     color: $text;
     background: $primary-background;
-    overflow-x: hidden;
+    scrollbar-size: 1 1;
 }
 
 .util {

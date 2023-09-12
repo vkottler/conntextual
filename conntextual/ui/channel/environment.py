@@ -89,7 +89,7 @@ class ChannelEnvironmentDisplay(Static):
         # Create log and command widget.
         log = ChannelEnvironmentLog()
         log.logger = self.model.logger
-        log.suggester = CommandSuggester.create()
+        log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
         yield Static("util", classes="util")

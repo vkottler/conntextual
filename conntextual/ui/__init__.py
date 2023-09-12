@@ -57,12 +57,27 @@ async def test(tui: Base) -> None:
             await sleep(0.05)
 
     # Send some commands.
-    for command in ["test"]:
-        for env in tui.model.environments:
-            env.query_one(ChannelEnvironmentLog).handle_submit(
-                MockEvent(command)  # type: ignore
-            )
-            await sleep(0.05)
+    for env in tui.model.environments:
+        log = env.query_one(ChannelEnvironmentLog)
+
+        processor = log.suggester.processor
+        processor.parser.exit(message="null")
+
+        await processor.get_suggestion("set m")
+        await processor.get_suggestion("set e")
+
+        for command in [
+            "test",
+            "help",
+            "set a.0.random 0.5",
+            "set a.0.enum three",
+            "set a.0.bool true",
+            "toggle a.0.bool",
+        ]:
+            processor.command(command)
+            log.handle_submit(MockEvent(command))  # type: ignore
+
+        await sleep(0.05)
 
     tui.model.app.stop.set()
 

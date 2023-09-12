@@ -3,7 +3,7 @@ A module impementing a channel-environment log widget.
 """
 
 # built-in
-from logging import Formatter, Logger
+from logging import ERROR, INFO, Formatter, Logger
 
 # third-party
 from textual import on
@@ -38,10 +38,13 @@ class ChannelEnvironmentLog(Static):
     def handle_submit(self, event: Input.Submitted) -> None:
         """Handle input submission."""
 
-        # move this to environment's command handler
-        self.logger.info("Received command: '%s'.", event.value)
+        result = self.suggester.processor.command(event.value)
 
-        # clear log line (but only if succeeded?)
+        self.logger.log(
+            INFO if result else ERROR, "%s: %s", event.value, result
+        )
+
+        # Reset input.
         node = self.query_one(Input)
         node.action_home()
         node.action_delete_right_all()
@@ -57,7 +60,4 @@ class ChannelEnvironmentLog(Static):
 
         yield Log(classes="log", max_lines=MAX_LINES)
 
-        # make hitting enter actually do something
-        yield Input(
-            "input bar", classes="command_input", suggester=self.suggester
-        )
+        yield Input("set ", classes="command_input", suggester=self.suggester)
