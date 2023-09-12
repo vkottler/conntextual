@@ -6,11 +6,12 @@ A module implementing user interface elements for channel environments.
 from typing import List, Tuple, Union
 
 # third-party
+from rich.text import Text
 from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Static
+from textual.widgets import DataTable, Placeholder, Static
 from vcorelib.logging import LoggerType
 
 # internal
@@ -28,6 +29,8 @@ class ChannelEnvironmentDisplay(Static):
 
     by_index: List[Tuple[Coordinate, AnyChannel]]
 
+    columns = ["id", "type", "name", "value"]
+
     def on_mount(self) -> None:
         """Populate channel table."""
 
@@ -36,8 +39,8 @@ class ChannelEnvironmentDisplay(Static):
         names = list(env.names)
 
         # Set up columns.
-        table.add_columns("id", "type", "name", "value")
-        value_column = 3
+        table.add_columns(*self.columns)
+        value_column: int = self.columns.index("value")
 
         row_idx = 0
 
@@ -52,7 +55,14 @@ class ChannelEnvironmentDisplay(Static):
                 assert enum_name is not None
                 kind_str = enum_name
 
-            table.add_row(chan.id, kind_str, name, env.value(chan.id))
+            table.add_row(
+                chan.id,
+                kind_str,
+                name
+                if not chan.commandable
+                else Text(name, style="bold green"),
+                env.value(chan.id),
+            )
             self.by_index.append((Coordinate(row_idx, value_column), chan))
             row_idx += 1
 
@@ -81,10 +91,10 @@ class ChannelEnvironmentDisplay(Static):
 
         # this should go in a container
         yield DataTable[Union[str, int, float]](
-            fixed_columns=4, classes="channels"
+            fixed_columns=len(self.columns), classes="channels"
         )
 
-        yield Static("plot", classes="plot")
+        yield Placeholder("plot (under construction)", classes="plot")
 
         # Create log and command widget.
         log = ChannelEnvironmentLog()
@@ -92,7 +102,7 @@ class ChannelEnvironmentDisplay(Static):
         log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
-        yield Static("util", classes="util")
+        yield Placeholder("util (under construction)", classes="util")
 
     @staticmethod
     def create(

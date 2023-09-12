@@ -11,6 +11,7 @@ import os
 from runtimepy.net.arbiter import AppInfo
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.keys import Keys
 from textual.logging import TextualHandler
 from textual.widgets import Footer, TabbedContent
 
@@ -26,8 +27,8 @@ class Base(App[None]):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("d", "toggle_dark", "Toggle dark mode"),
-        Binding("tab", "tab(True)", "Next tab", priority=True),
-        Binding("shift+tab", "tab(False)", "Previous tab", priority=True),
+        Binding(Keys.Tab, "tab(True)", "Next tab", priority=True),
+        Binding(Keys.BackTab, "tab(False)", "Previous tab", priority=True),
     ]
 
     CSS_PATH = "base.tcss"

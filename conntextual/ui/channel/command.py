@@ -4,11 +4,13 @@ A module implementing UI command processing.
 
 # built-in
 from argparse import Namespace
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 # third-party
+from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.mixins.environment import ChannelEnvironmentMixin
+from runtimepy.primitives.bool import Bool
 from vcorelib.logging import LoggerType
 
 # internal
@@ -46,20 +48,66 @@ class CommandProcessor(ChannelEnvironmentMixin):
 
         return result
 
+    def do_set(self, args: Namespace) -> CommandResult:
+        """Attempt to set a channel value."""
+
+        result = SUCCESS
+
+        if not args.extra:
+            return CommandResult(False, "No value specified.")
+
+        try:
+            self.env.set(args.channel, args.extra[0])
+        except (KeyError, ValueError) as exc:
+            result = CommandResult(False, str(exc))
+
+        return result
+
+    def do_toggle(self, args: Namespace, channel: AnyChannel) -> CommandResult:
+        """Attempt to toggle a channel."""
+
+        if args.command == ChannelCommand.TOGGLE:
+            if not channel.type.is_boolean:
+                return CommandResult(
+                    False,
+                    (
+                        f"Channel '{args.channel}' is "
+                        f"{channel.type}, not boolean."
+                    ),
+                )
+
+            cast(Bool, channel.raw).toggle()
+
+        return SUCCESS
+
     def handle_command(self, args: Namespace) -> CommandResult:
         """Handle a command from parsed arguments."""
 
-        # validate channel
+        result = SUCCESS
 
-        if args.command == ChannelCommand.SET:
-            pass
+        chan = self.env.get(args.channel)
+        if chan is None:
+            return CommandResult(False, f"No channel '{args.channel}'.")
 
-        elif args.command == ChannelCommand.TOGGLE:
-            pass
+        channel, enum = chan
+        del enum
 
-        self.logger.info(args)
+        # Check if channel is commandable (or if a -f/--force flag is set?).
+        if not channel.commandable and not args.force:
+            return CommandResult(
+                False,
+                (
+                    f"Channel '{args.channel}' not "
+                    "commandable! (use -f/--force to bypass if necessary)"
+                ),
+            )
 
-        return SUCCESS
+        if args.command == ChannelCommand.TOGGLE:
+            result = self.do_toggle(args, channel)
+        elif args.command == ChannelCommand.SET:
+            result = self.do_set(args)
+
+        return result
 
     def parse(self, value: str) -> Optional[Namespace]:
         """Attempt to parse arguments."""

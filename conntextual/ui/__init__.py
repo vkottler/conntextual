@@ -69,10 +69,16 @@ async def test(tui: Base) -> None:
         for command in [
             "test",
             "help",
-            "set a.0.random 0.5",
-            "set a.0.enum three",
-            "set a.0.bool true",
-            "toggle a.0.bool",
+            "set a.0.random",
+            "set a.0.random -f",
+            "set a.0.random 0.5 -f",
+            "set a.0.enum three -f",
+            "set a.0.enum 2.8 -f",
+            "set a.0.bool true -f",
+            "set a.0.bool 1.1 -f",
+            "toggle a.0.bool -f",
+            "toggle a.0.bool -f",
+            "toggle a.0.enum -f",
         ]:
             processor.command(command)
             log.handle_submit(MockEvent(command))  # type: ignore

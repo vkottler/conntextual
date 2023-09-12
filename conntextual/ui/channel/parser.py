@@ -45,6 +45,13 @@ class CommandParser(ArgumentParser):
         )
 
         self.add_argument(
+            "-f",
+            "--force",
+            action="store_true",
+            help="operate on a channel even if it's not commandable",
+        )
+
+        self.add_argument(
             "channel", type=str, help="channel to perform action on"
         )
 

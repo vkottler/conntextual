@@ -30,7 +30,6 @@ Log {
 }
 
 .util {
-    background: green;
     height: 100%;
 }
 

@@ -45,6 +45,7 @@ class SampleTask(ArbiterTask):
                         self.env.float_channel("random", "double")
                         self.env.int_channel("enum", enum="SampleEnum")
                         self.env.bool_channel("bool")
+                        self.env.int_channel("int", commandable=True)
 
     async def dispatch(self) -> bool:
         """Dispatch an iteration of this task."""
