@@ -6,42 +6,20 @@ A module implementing a user interface base application.
 import asyncio
 import logging
 import os
-from typing import Optional, cast
 
 # third-party
-from rich.console import RenderableType
-from rich.text import Text
 from runtimepy.net.arbiter import AppInfo
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.keys import Keys
 from textual.logging import TextualHandler
-from textual.widgets import Footer, TabbedContent
+from textual.widgets import TabbedContent
 
 # internal
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
 from conntextual.ui.channel.model import ChannelEnvironmentSource
+from conntextual.ui.footer import CustomFooter
 from conntextual.ui.model import Model
-
-
-class CustomFooter(Footer):
-    """An extension of the footer widget."""
-
-    current_tab: Optional[str]
-
-    def render(self) -> RenderableType:
-        """Render the footer."""
-
-        result: Text = cast(Text, super().render())
-
-        if self.current_tab:
-            result = Text.assemble(
-                result,
-                "| ",
-                Text(f"tab: {self.current_tab}", style="yellow bold"),
-            )
-
-        return result
 
 
 class Base(App[None]):
@@ -178,6 +156,8 @@ class Base(App[None]):
         result = Base()
         result.model = Model.create(app)
 
+        # Don't handle setting up dispatch using set interval, use a runtimepy
+        # app method or task class.
         rate: float = app.config["rate"]  # type: ignore
         result.set_interval(1 / rate, result.dispatch)
 

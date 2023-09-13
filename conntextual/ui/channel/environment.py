@@ -84,7 +84,7 @@ class ChannelEnvironmentDisplay(Static):
     @property
     def label(self) -> str:
         """Obtain a label string for this instance."""
-        return f"{self.model.source} - {self.model.name}"
+        return f"({self.model.source}) {self.model.name}"
 
     def compose(self) -> ComposeResult:
         """Create child nodes."""
