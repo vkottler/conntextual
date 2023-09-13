@@ -56,6 +56,9 @@ async def test(tui: Base) -> None:
             tui.action_tab(direction)
             await sleep(0.05)
 
+    tui.action_toggle_pause()
+    tui.action_toggle_pause()
+
     # Send some commands.
     for env in tui.model.environments:
         log = env.query_one(ChannelEnvironmentLog)

@@ -1,2 +1,3 @@
-runtimepy>=2.6.5
+runtimepy>=2.7.0
 textual
+uvloop

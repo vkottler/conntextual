@@ -8,8 +8,9 @@ no_logging_init: true
 
 # - "windows-curses; sys_platform == 'win32'"
 requirements:
-  - runtimepy>=2.6.5
+  - runtimepy>=2.7.0
   - textual
+  - uvloop
 
 dev_requirements:
   - setuptools-wrapper

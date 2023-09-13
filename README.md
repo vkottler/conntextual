@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=893e5569507743a2efe2057e830443ee
+    hash=9591c47651d9678da26dc4a9551edb92
     =====================================
 -->
 
-# conntextual ([0.3.0](https://pypi.org/project/conntextual/))
+# conntextual ([0.3.1](https://pypi.org/project/conntextual/))
 
 [![python](https://img.shields.io/pypi/pyversions/conntextual.svg)](https://pypi.org/project/conntextual/)
 ![Build Status](https://github.com/vkottler/conntextual/workflows/Python%20Package/badge.svg)
@@ -45,7 +45,8 @@ This package is tested on the following platforms:
 ```
 $ ./venv3.11/bin/conntextual -h
 
-usage: conntextual [-h] [--version] [-v] [-q] [--curses] [-C DIR]
+usage: conntextual [-h] [--version] [-v] [-q] [--curses] [--no-uvloop]
+                   [-C DIR]
                    {ui,noop} ...
 
 A network-application TUI using textual.
@@ -56,6 +57,7 @@ options:
   -v, --verbose      set to increase logging verbosity
   -q, --quiet        set to reduce output
   --curses           whether or not to use curses.wrapper when starting
+  --no-uvloop        whether or not to disable uvloop as event loop driver
   -C DIR, --dir DIR  execute from a specific directory
 
 commands:
