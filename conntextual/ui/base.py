@@ -13,7 +13,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.keys import Keys
 from textual.logging import TextualHandler
-from textual.widgets import TabbedContent
+from textual.widgets import Input, TabbedContent
 
 # internal
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
@@ -47,6 +47,12 @@ class Base(App[None]):
         tabs = self.query_one(TabbedContent)
         curr = tabs.active
         if not curr:
+            return
+
+        # Accept an input box suggestion if an input box is highlighted.
+        focus = self.focused
+        if forward and focus is not None and isinstance(focus, Input):
+            focus.action_cursor_right()
             return
 
         idx = int(curr.split("-")[1]) - 1

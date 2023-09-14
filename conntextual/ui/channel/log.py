@@ -23,6 +23,7 @@ DEFAULT_FORMAT = Formatter(
 class ChannelEnvironmentLog(Static):
     """A channel-environment log widget."""
 
+    parent_name: str
     logger: LoggerType
     queue: LogRecordQueue
     suggester: CommandSuggester
@@ -60,4 +61,9 @@ class ChannelEnvironmentLog(Static):
 
         yield Log(classes="log", max_lines=MAX_LINES)
 
-        yield Input("set ", classes="command_input", suggester=self.suggester)
+        yield Input(
+            "set ",
+            classes="command_input",
+            suggester=self.suggester,
+            id=f"{self.parent_name}-input",
+        )
