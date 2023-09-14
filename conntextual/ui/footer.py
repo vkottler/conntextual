@@ -21,6 +21,8 @@ class CustomFooter(Footer):
 
         result: Text = cast(Text, super().render())
 
+        # Manually add text for tab and shift tab.
+
         if self.current_tab:
             result = Text.assemble(
                 result,

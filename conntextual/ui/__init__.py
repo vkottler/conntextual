@@ -59,6 +59,10 @@ async def test(tui: Base) -> None:
     tui.action_toggle_pause()
     tui.action_toggle_pause()
 
+    # Test input tab handling.
+    await tui.action_focus("self-input")
+    tui.action_tab(True)
+
     # Send some commands.
     for env in tui.model.environments:
         log = env.query_one(ChannelEnvironmentLog)
