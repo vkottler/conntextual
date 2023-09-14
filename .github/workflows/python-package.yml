@@ -35,7 +35,7 @@ jobs:
           python-version: ${{matrix.python-version}}
           cache: pip
 
-      - run: pip${{matrix.python-version}} install vmklib>=1.8.0
+      - run: pip${{matrix.python-version}} install vmklib
 
       - run: mk python-sa-types
 
@@ -66,7 +66,7 @@ jobs:
 
       - run: |
           mk python-release owner=vkottler \
-                            repo=conntextual version=0.3.2
+                            repo=conntextual version=0.3.3
         if: |
           matrix.python-version == '3.11'
           && matrix.system == 'ubuntu-latest'
