@@ -70,8 +70,8 @@ async def test(tui: Base) -> None:
         processor = log.suggester.processor
         processor.parser.exit(message="null")
 
-        await processor.get_suggestion("set m")
-        await processor.get_suggestion("set e")
+        processor.get_suggestion("set m")
+        processor.get_suggestion("set e")
 
         for command in [
             "test",

@@ -8,21 +8,19 @@ from typing import Optional
 
 # third-party
 from runtimepy.channel.environment import ChannelEnvironment
+from runtimepy.channel.environment.command import ChannelCommandProcessor
 from textual.suggester import Suggester
 from vcorelib.logging import LoggerType
-
-# internal
-from conntextual.ui.channel.command import CommandProcessor
 
 
 class CommandSuggester(Suggester):
     """An input suggester for channel environment commands."""
 
-    processor: CommandProcessor
+    processor: ChannelCommandProcessor
 
     async def get_suggestion(self, value: str) -> Optional[str]:
         """Get an input suggestion."""
-        return await self.processor.get_suggestion(value)
+        return self.processor.get_suggestion(value)
 
     @staticmethod
     def create(
@@ -31,5 +29,5 @@ class CommandSuggester(Suggester):
         """A method for creating a command suggester."""
 
         result = CommandSuggester()
-        result.processor = CommandProcessor(env, logger)
+        result.processor = ChannelCommandProcessor(env, logger)
         return result
