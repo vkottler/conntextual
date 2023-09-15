@@ -12,7 +12,7 @@ from runtimepy.net.arbiter import AppInfo
 # internal
 from conntextual.ui.base import Base
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
-from conntextual.ui.channel.log import ChannelEnvironmentLog
+from conntextual.ui.channel.log import ChannelEnvironmentLog, InputWithHistory
 from conntextual.ui.channel.model import ChannelEnvironmentSource
 from conntextual.ui.task import TuiDispatchTask
 
@@ -67,6 +67,7 @@ async def test(tui: Base) -> None:
     # Send some commands.
     for env in tui.model.environments:
         log = env.query_one(ChannelEnvironmentLog)
+        input_box = env.query_one(InputWithHistory)
 
         processor = log.suggester.processor
         processor.parser.exit(message="null")
@@ -88,7 +89,10 @@ async def test(tui: Base) -> None:
             "toggle a.0.bool -f",
             "toggle a.0.enum -f",
         ]:
-            processor.command(command)
+            input_box.value = command
+            await input_box.action_submit()
+            input_box.action_previous_command()
+
             log.handle_submit(MockEvent(command))  # type: ignore
 
         await sleep(0.05)

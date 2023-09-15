@@ -1,6 +1,0 @@
----
-includes:
-  - package://runtimepy/factories.yaml
-
-factories:
-  - {name: conntextual.ui.task.TuiDispatch}

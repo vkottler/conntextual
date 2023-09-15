@@ -1,6 +1,9 @@
 ---
 includes:
-  - common.yaml
+  - package://runtimepy/factories.yaml
+
+factories:
+  - {name: conntextual.ui.task.TuiDispatch}
 
 tasks:
   - {name: tui, factory: TuiDispatch, period_s: 0.1}

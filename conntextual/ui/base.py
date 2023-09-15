@@ -30,7 +30,8 @@ class Base(App[None]):
     """A simple textual application."""
 
     BINDINGS = [
-        ("q", "quit", "quit"),
+        ("q", "quit"),
+        (Keys.Escape, "quit", "(or q) quit"),
         ("space", "toggle_pause", "toggle pause"),
         ("d", "toggle_dark", "toggle dark mode"),
         ("g", "screenshot", "take a screenshot"),
