@@ -6,8 +6,10 @@ A module implementing a user interface base application.
 import asyncio
 import logging
 import os
+from pathlib import Path
 
 # third-party
+from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.net.arbiter import AppInfo
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -21,19 +23,23 @@ from conntextual.ui.channel.model import ChannelEnvironmentSource
 from conntextual.ui.footer import CustomFooter
 from conntextual.ui.model import Model
 
+TCSS_ROOT = Path(__file__).parent.parent.joinpath("data", "tcss")
+
 
 class Base(App[None]):
     """A simple textual application."""
 
     BINDINGS = [
-        ("q", "quit", "quit"),
+        ("q", "quit"),
+        (Keys.Escape, "quit", "(or q) quit"),
         ("space", "toggle_pause", "toggle pause"),
         ("d", "toggle_dark", "toggle dark mode"),
+        ("g", "screenshot", "take a screenshot"),
         Binding(Keys.Tab, "tab(True)", "Next tab", priority=True),
         Binding(Keys.BackTab, "tab(False)", "Previous tab", priority=True),
     ]
 
-    CSS_PATH = "base.tcss"
+    CSS_PATH = TCSS_ROOT.joinpath("base.tcss")
 
     model: Model
 
@@ -99,30 +105,14 @@ class Base(App[None]):
             if not curr:
                 return
 
-            with self.model.metrics.measure(
-                loop,
-                self.model.dispatch_rate,
-                self.model.dispatch_time,
-                self.model.iter_time,
-            ):
-                env = self.query_one(
-                    f"#{self.model.tab_to_id[curr]}",
-                    expect_type=ChannelEnvironmentDisplay,
-                )
-                env.update_channels()
+            env = self.query_one(
+                f"#{self.model.tab_to_id[curr]}",
+                expect_type=ChannelEnvironmentDisplay,
+            )
+            env.update_channels()
 
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""
-
-        # Channels for the UI itself.
-        self.model.environments = [
-            ChannelEnvironmentDisplay.create(
-                "self",
-                self.model.env,
-                ChannelEnvironmentSource.UI,
-                logging.Logger.root,
-            )
-        ]
 
         # Channels for tasks and connections.
         self.model.environments += [
@@ -152,19 +142,16 @@ class Base(App[None]):
         yield from self.compose_app()
 
     @staticmethod
-    def create(app: AppInfo, handle_debug: bool = True) -> "Base":
+    def create(
+        app: AppInfo, env: ChannelEnvironment, handle_debug: bool = True
+    ) -> "Base":
         """Create an application instance."""
 
-        if handle_debug and app.config["debug"]:
+        if handle_debug and app.config.get("debug"):
             logging.basicConfig(level="NOTSET", handlers=[TextualHandler()])
             os.environ["TEXTUAL"] = "devtools,debug"
 
         result = Base()
-        result.model = Model.create(app)
-
-        # Don't handle setting up dispatch using set interval, use a runtimepy
-        # app method or task class.
-        rate: float = app.config["rate"]  # type: ignore
-        result.set_interval(1 / rate, result.dispatch)
+        result.model = Model.create(app, env)
 
         return result

@@ -12,8 +12,9 @@ from runtimepy.net.arbiter import AppInfo
 # internal
 from conntextual.ui.base import Base
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
-from conntextual.ui.channel.log import ChannelEnvironmentLog
+from conntextual.ui.channel.log import ChannelEnvironmentLog, InputWithHistory
 from conntextual.ui.channel.model import ChannelEnvironmentSource
+from conntextual.ui.task import TuiDispatchTask
 
 __all__ = [
     "Base",
@@ -60,12 +61,13 @@ async def test(tui: Base) -> None:
     tui.action_toggle_pause()
 
     # Test input tab handling.
-    await tui.action_focus("self-input")
+    await tui.action_focus("tui-input")
     tui.action_tab(True)
 
     # Send some commands.
     for env in tui.model.environments:
         log = env.query_one(ChannelEnvironmentLog)
+        input_box = env.query_one(InputWithHistory)
 
         processor = log.suggester.processor
         processor.parser.exit(message="null")
@@ -87,8 +89,10 @@ async def test(tui: Base) -> None:
             "toggle a.0.bool -f",
             "toggle a.0.enum -f",
         ]:
-            processor.command(command)
+            input_box.value = command
             log.handle_submit(MockEvent(command))  # type: ignore
+
+            input_box.action_previous_command()
 
         await sleep(0.05)
 
@@ -98,7 +102,10 @@ async def test(tui: Base) -> None:
 async def run(app: AppInfo) -> int:
     """Run a textual application."""
 
-    tui = Base.create(app)
+    periodics = list(app.search_tasks(kind=TuiDispatchTask))
+    assert len(periodics) == 1, f"{len(periodics)} application tasks found!"
+
+    tui = Base.create(app, periodics[0].env)
 
     tasks = [
         tui.run_async(
@@ -108,6 +115,17 @@ async def run(app: AppInfo) -> int:
 
     if "test" in app.config and app.config["test"]:
         tasks.append(test(tui))
+
+    async def set_tui() -> None:
+        """
+        Set the TUI task's TUI attribute. Ensure the application is
+        started first.
+        """
+
+        await sleep(0.01)
+        periodics[0].tui = tui
+
+    tasks.append(set_tui())
 
     await gather(*tasks)
 

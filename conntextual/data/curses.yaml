@@ -1,6 +1,6 @@
 ---
 includes:
-  - common.yaml
+  - package://runtimepy/factories.yaml
 
 factories:
   - {name: conntextual.curses.TuiApp}

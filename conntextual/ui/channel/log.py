@@ -8,6 +8,7 @@ from logging import ERROR, INFO, Formatter, Logger
 # third-party
 from textual import on
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.widgets import Input, Log, Static
 from vcorelib.logging import LoggerType, LogRecordQueue, queue_handler
 
@@ -18,6 +19,21 @@ MAX_LINES = 1000
 DEFAULT_FORMAT = Formatter(
     "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
+
+
+class InputWithHistory(Input):
+    """An input with last-command history."""
+
+    BINDINGS = [Binding("up", "previous_command", "previous command")]
+
+    previous: str
+
+    def action_previous_command(self) -> None:
+        """Go back to the previous command."""
+
+        if self.previous:
+            self.value = self.previous
+            self.refresh()
 
 
 class ChannelEnvironmentLog(Static):
@@ -39,6 +55,7 @@ class ChannelEnvironmentLog(Static):
     def handle_submit(self, event: Input.Submitted) -> None:
         """Handle input submission."""
 
+        self.query_one(InputWithHistory).previous = event.value
         result = self.suggester.processor.command(event.value)
 
         self.logger.log(
@@ -61,9 +78,11 @@ class ChannelEnvironmentLog(Static):
 
         yield Log(classes="log", max_lines=MAX_LINES)
 
-        yield Input(
+        input_box = InputWithHistory(
             "set ",
             classes="command_input",
             suggester=self.suggester,
             id=f"{self.parent_name}-input",
         )
+        input_box.previous = ""
+        yield input_box
