@@ -90,10 +90,9 @@ async def test(tui: Base) -> None:
             "toggle a.0.enum -f",
         ]:
             input_box.value = command
-            await input_box.action_submit()
-            input_box.action_previous_command()
-
             log.handle_submit(MockEvent(command))  # type: ignore
+
+            input_box.action_previous_command()
 
         await sleep(0.05)
 
@@ -107,7 +106,6 @@ async def run(app: AppInfo) -> int:
     assert len(periodics) == 1, f"{len(periodics)} application tasks found!"
 
     tui = Base.create(app, periodics[0].env)
-    periodics[0].tui = tui
 
     tasks = [
         tui.run_async(
@@ -117,6 +115,17 @@ async def run(app: AppInfo) -> int:
 
     if "test" in app.config and app.config["test"]:
         tasks.append(test(tui))
+
+    async def set_tui() -> None:
+        """
+        Set the TUI task's TUI attribute. Ensure the application is
+        started first.
+        """
+
+        await sleep(0.01)
+        periodics[0].tui = tui
+
+    tasks.append(set_tui())
 
     await gather(*tasks)
 

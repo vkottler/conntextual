@@ -28,12 +28,6 @@ class InputWithHistory(Input):
 
     previous: str
 
-    async def action_submit(self) -> None:
-        """Handle a submit action."""
-
-        await super().action_submit()
-        self.previous = self.value
-
     def action_previous_command(self) -> None:
         """Go back to the previous command."""
 
@@ -61,6 +55,7 @@ class ChannelEnvironmentLog(Static):
     def handle_submit(self, event: Input.Submitted) -> None:
         """Handle input submission."""
 
+        self.query_one(InputWithHistory).previous = event.value
         result = self.suggester.processor.command(event.value)
 
         self.logger.log(
