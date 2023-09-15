@@ -35,7 +35,7 @@ def test_ui_curses():
 def test_ui_command_basic():
     """Test basic argument parsing."""
 
-    args = [PKG_NAME, "ui"]
+    args = [PKG_NAME, "--no-uvloop", "ui"]
 
     assert (
         conntextual_main(

@@ -1,0 +1,6 @@
+---
+factories:
+  - {name: conntextual.ui.sample.Sample}
+
+tasks:
+  - {name: sample, factory: Sample, period_s: 0.2}
