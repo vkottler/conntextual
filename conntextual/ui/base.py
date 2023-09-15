@@ -4,6 +4,7 @@ A module implementing a user interface base application.
 
 # built-in
 import asyncio
+from contextlib import suppress
 import logging
 import os
 from pathlib import Path
@@ -13,6 +14,7 @@ from runtimepy.channel.environment import ChannelEnvironment
 from runtimepy.net.arbiter import AppInfo
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.css.query import NoMatches
 from textual.keys import Keys
 from textual.logging import TextualHandler
 from textual.widgets import Input, TabbedContent
@@ -105,11 +107,12 @@ class Base(App[None]):
             if not curr:
                 return
 
-            env = self.query_one(
-                f"#{self.model.tab_to_id[curr]}",
-                expect_type=ChannelEnvironmentDisplay,
-            )
-            env.update_channels()
+            with suppress(NoMatches):
+                env = self.query_one(
+                    f"#{self.model.tab_to_id[curr]}",
+                    expect_type=ChannelEnvironmentDisplay,
+                )
+                env.update_channels()
 
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""

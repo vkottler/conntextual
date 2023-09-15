@@ -4,6 +4,7 @@ A module impementing a channel-environment log widget.
 
 # built-in
 from logging import ERROR, INFO, Formatter, Logger
+from typing import Optional
 
 # third-party
 from textual import on
@@ -42,7 +43,7 @@ class ChannelEnvironmentLog(Static):
     parent_name: str
     logger: LoggerType
     queue: LogRecordQueue
-    suggester: CommandSuggester
+    suggester: Optional[CommandSuggester]
 
     def dispatch(self) -> None:
         """Dispatch the log updater."""
@@ -56,6 +57,7 @@ class ChannelEnvironmentLog(Static):
         """Handle input submission."""
 
         self.query_one(InputWithHistory).previous = event.value
+        assert self.suggester is not None
         result = self.suggester.processor.command(event.value)
 
         self.logger.log(
@@ -78,11 +80,12 @@ class ChannelEnvironmentLog(Static):
 
         yield Log(classes="log", max_lines=MAX_LINES)
 
-        input_box = InputWithHistory(
-            "set ",
-            classes="command_input",
-            suggester=self.suggester,
-            id=f"{self.parent_name}-input",
-        )
-        input_box.previous = ""
-        yield input_box
+        if self.suggester is not None:
+            input_box = InputWithHistory(
+                "set ",
+                classes="command_input",
+                suggester=self.suggester,
+                id=f"{self.parent_name}-input",
+            )
+            input_box.previous = ""
+            yield input_box
