@@ -69,6 +69,7 @@ async def test(tui: Base) -> None:
         log = env.query_one(ChannelEnvironmentLog)
         input_box = env.query_one(InputWithHistory)
 
+        assert log.suggester is not None
         processor = log.suggester.processor
         processor.parser.exit(message="null")
 
