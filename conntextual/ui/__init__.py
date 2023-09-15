@@ -14,6 +14,7 @@ from conntextual.ui.base import Base
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource
+from conntextual.ui.task import TuiDispatchTask
 
 __all__ = [
     "Base",
@@ -60,7 +61,7 @@ async def test(tui: Base) -> None:
     tui.action_toggle_pause()
 
     # Test input tab handling.
-    await tui.action_focus("self-input")
+    await tui.action_focus("tui-input")
     tui.action_tab(True)
 
     # Send some commands.
@@ -98,7 +99,11 @@ async def test(tui: Base) -> None:
 async def run(app: AppInfo) -> int:
     """Run a textual application."""
 
-    tui = Base.create(app)
+    periodics = list(app.search_tasks(kind=TuiDispatchTask))
+    assert len(periodics) == 1, f"{len(periodics)} application tasks found!"
+
+    tui = Base.create(app, periodics[0].env)
+    periodics[0].tui = tui
 
     tasks = [
         tui.run_async(

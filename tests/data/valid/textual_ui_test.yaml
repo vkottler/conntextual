@@ -1,4 +1,11 @@
 ---
 config:
+  debug: true
   headless: true
   test: true
+
+factories:
+  - {name: conntextual.ui.sample.Sample}
+
+tasks:
+  - {name: sample, factory: Sample, period_s: 0.2}
