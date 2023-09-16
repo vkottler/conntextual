@@ -3,7 +3,7 @@ A module implementing a basic user interface.
 """
 
 # built-in
-from asyncio import gather, sleep
+from asyncio import sleep
 from dataclasses import dataclass
 
 # third-party
@@ -18,7 +18,7 @@ from conntextual.ui.task import TuiDispatchTask
 
 __all__ = [
     "Base",
-    "run",
+    "test",
     "ChannelEnvironmentDisplay",
     "ChannelEnvironmentSource",
 ]
@@ -44,10 +44,10 @@ class MockEvent:
     value: str
 
 
-async def test(tui: Base) -> None:
+async def tui_test(tui: Base) -> None:
     """Test the UI."""
 
-    await sleep(0.05)
+    await tui.composed.wait()
 
     iterations = 2 * len(tui.model.environments)
 
@@ -100,34 +100,17 @@ async def test(tui: Base) -> None:
     tui.model.app.stop.set()
 
 
-async def run(app: AppInfo) -> int:
+async def test(app: AppInfo) -> int:
     """Run a textual application."""
 
-    periodics = list(app.search_tasks(kind=TuiDispatchTask))
-    assert len(periodics) == 1, f"{len(periodics)} application tasks found!"
+    if not app.stop.is_set():
+        periodics = list(app.search_tasks(kind=TuiDispatchTask))
+        assert (
+            len(periodics) == 1
+        ), f"{len(periodics)} application tasks found!"
 
-    tui = Base.create(app, periodics[0].env)
-
-    tasks = [
-        tui.run_async(
-            headless=app.config.get("headless", False),  # type: ignore
-        ),
-    ]
-
-    if "test" in app.config and app.config["test"]:
-        tasks.append(test(tui))
-
-    async def set_tui() -> None:
-        """
-        Set the TUI task's TUI attribute. Ensure the application is
-        started first.
-        """
-
-        await sleep(0.01)
-        periodics[0].tui = tui
-
-    tasks.append(set_tui())
-
-    await gather(*tasks)
+        await tui_test(periodics[0].tui)
+        app.logger.info("Test complete, stopping application.")
+        app.stop.set()
 
     return 0

@@ -44,6 +44,7 @@ class Base(App[None]):
     CSS_PATH = TCSS_ROOT.joinpath("base.tcss")
 
     model: Model
+    composed: asyncio.Event
 
     def action_toggle_pause(self) -> None:
         """Toggle pause state."""
@@ -93,10 +94,6 @@ class Base(App[None]):
     def dispatch(self) -> None:
         """Update channel values."""
 
-        # Handle the stop signal.
-        if self.model.app.stop.is_set():
-            self.exit()
-
         loop = asyncio.get_running_loop()
         self.model.uptime.value = loop.time() - self.model.start
 
@@ -143,6 +140,7 @@ class Base(App[None]):
 
         self._init_environments()
         yield from self.compose_app()
+        self.composed.set()
 
     @staticmethod
     def create(
@@ -156,5 +154,6 @@ class Base(App[None]):
 
         result = Base()
         result.model = Model.create(app, env)
+        result.composed = asyncio.Event()
 
         return result

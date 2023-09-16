@@ -2,7 +2,9 @@
 includes:
   - package://conntextual/sample.yaml
 
+app:
+  - conntextual.ui.test
+
 config:
   debug: true
   headless: true
-  test: true

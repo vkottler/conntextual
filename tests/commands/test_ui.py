@@ -36,13 +36,9 @@ def test_ui_command_basic():
     """Test basic argument parsing."""
 
     args = [PKG_NAME, "--no-uvloop", "ui"]
+    test_input = "package://tests/valid/textual_ui_test.yaml"
 
-    assert (
-        conntextual_main(
-            args + CONFIGS + ["package://tests/valid/textual_ui_test.yaml"]
-        )
-        == 0
-    )
+    assert conntextual_main(args + CONFIGS + [test_input]) == 0
 
-    args = [PKG_NAME, "-v", "ui", "--init_only"]
+    args = [PKG_NAME, "-v", "ui", "--init_only", test_input]
     assert conntextual_main(args) == 0
