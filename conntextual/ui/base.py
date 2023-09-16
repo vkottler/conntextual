@@ -53,7 +53,7 @@ class Base(App[None]):
     def action_tab(self, forward: bool) -> None:
         """Change the active tab."""
 
-        tabs = self.query_one(TabbedContent)
+        tabs = self.tabs
         curr = tabs.active
         if not curr:
             return
@@ -88,8 +88,15 @@ class Base(App[None]):
         footer.current_tab = self.model.environments[0].label
         yield footer
 
-        with TabbedContent(*(x.model.name for x in self.model.environments)):
+        with TabbedContent(
+            *(x.model.name for x in self.model.environments), classes="tabs"
+        ):
             yield from self.model.environments
+
+    @property
+    def tabs(self) -> TabbedContent:
+        """Get the tab container."""
+        return self.query_one(".tabs", expect_type=TabbedContent)
 
     def dispatch(self) -> None:
         """Update channel values."""
@@ -99,7 +106,7 @@ class Base(App[None]):
 
         if not self.model.paused:
             # Only update elements under the active tab.
-            tabs = self.query_one(TabbedContent)
+            tabs = self.tabs
             curr = tabs.active
             if not curr:
                 return
@@ -157,3 +164,8 @@ class Base(App[None]):
         result.composed = asyncio.Event()
 
         return result
+
+    async def action_quit(self) -> None:
+        """Stop the rest of the application when quitting."""
+        await super().action_quit()
+        self.model.app.stop.set()

@@ -25,6 +25,7 @@ class SampleTask(ArbiterTask):
             "SampleEnum",
             "int",
             items={
+                "zero": 0,
                 "one": 1,
                 "two": 2,
                 "three": 3,
@@ -38,12 +39,27 @@ class SampleTask(ArbiterTask):
             },
         )
 
+        self.env.enum(
+            "InsanelyLongEnumNameForTesting",
+            "int",
+            {
+                "very_long_member_name_0": 0,
+                "very_long_member_name_1": 1,
+                "very_long_member_name_2": 2,
+                "very_long_member_name_3": 3,
+            },
+        )
+
         for name in ["a", "b", "c"]:
             with self.env.names_pushed(name):
                 for i in range(10):
                     with self.env.names_pushed(str(i)):
                         self.env.float_channel("random", "double")
                         self.env.int_channel("enum", enum="SampleEnum")
+                        self.env.int_channel(
+                            "really_really_long_enum",
+                            enum="InsanelyLongEnumNameForTesting",
+                        )
                         self.env.bool_channel("bool")
                         self.env.int_channel("int", commandable=True)
 

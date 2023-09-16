@@ -11,7 +11,7 @@ from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Placeholder, Static
+from textual.widgets import DataTable, Static
 from vcorelib.logging import LoggerType
 
 # internal
@@ -20,6 +20,7 @@ from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
 from conntextual.ui.channel.suggester import CommandSuggester
 
 __all__ = ["ChannelEnvironmentDisplay"]
+COLUMNS = ["id", "type", "name", "value"]
 
 
 class ChannelEnvironmentDisplay(Static):
@@ -29,8 +30,6 @@ class ChannelEnvironmentDisplay(Static):
 
     by_index: List[Tuple[Coordinate, AnyChannel]]
 
-    columns = ["id", "type", "name", "value"]
-
     def on_mount(self) -> None:
         """Populate channel table."""
 
@@ -39,8 +38,8 @@ class ChannelEnvironmentDisplay(Static):
         names = list(env.names)
 
         # Set up columns.
-        table.add_columns(*self.columns)
-        value_column: int = self.columns.index("value")
+        table.add_columns(*COLUMNS)
+        value_column: int = COLUMNS.index("value")
 
         row_idx = 0
 
@@ -89,12 +88,9 @@ class ChannelEnvironmentDisplay(Static):
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
-        # this should go in a container
         yield DataTable[Union[str, int, float]](
-            fixed_columns=len(self.columns), classes="channels"
+            fixed_columns=len(COLUMNS), classes="channels"
         )
-
-        yield Placeholder("plot (under construction)", classes="plot")
 
         # Create log and command widget.
         log = ChannelEnvironmentLog()
@@ -103,7 +99,7 @@ class ChannelEnvironmentDisplay(Static):
         log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
-        yield Placeholder("util (under construction)", classes="util")
+        # yield Placeholder("util (under construction)", classes="util")
 
     @staticmethod
     def create(

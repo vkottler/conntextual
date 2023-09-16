@@ -10,16 +10,13 @@ TabPane {
 
 .channels {
     row-span: 2;
+    column-span: 3;
     scrollbar-size: 1 1;
 }
 
-.plot {
-    row-span: 2;
-    column-span: 2;
-}
-
+# column-span: 2;
 ChannelEnvironmentLog {
-    column-span: 2;
+    column-span: 3;
     height: 100%;
 }
 
