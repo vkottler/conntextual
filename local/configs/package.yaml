@@ -12,6 +12,8 @@ requirements:
   - runtimepy>=2.8.3
   - textual
   - uvloop
+  - plotext
+  - numpy
 
 dev_requirements:
   - setuptools-wrapper
@@ -22,3 +24,7 @@ dev_requirements:
 commands:
   - name: ui
     description: "run a user interface for runtimepy applications"
+
+mypy_local: |
+  [mypy-plotext.*]
+  ignore_missing_imports = True

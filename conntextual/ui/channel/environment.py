@@ -6,17 +6,20 @@ A module implementing user interface elements for channel environments.
 from typing import List, Tuple, Union
 
 # third-party
+import numpy as np
 from rich.text import Text
 from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
+from textual.containers import HorizontalScroll
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Static
+from textual.widgets import DataTable, Placeholder, Static
 from vcorelib.logging import LoggerType
 
 # internal
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
+from conntextual.ui.channel.plot import Plot
 from conntextual.ui.channel.suggester import CommandSuggester
 
 __all__ = ["ChannelEnvironmentDisplay"]
@@ -80,6 +83,8 @@ class ChannelEnvironmentDisplay(Static):
         # Update logs.
         self.query_one(ChannelEnvironmentLog).dispatch()
 
+        self.query_one(Plot).shift_data()
+
     @property
     def label(self) -> str:
         """Obtain a label string for this instance."""
@@ -88,9 +93,12 @@ class ChannelEnvironmentDisplay(Static):
     def compose(self) -> ComposeResult:
         """Create child nodes."""
 
-        yield DataTable[Union[str, int, float]](
-            fixed_columns=len(COLUMNS), classes="channels"
-        )
+        with HorizontalScroll(classes="channels"):
+            yield DataTable[Union[str, int, float]]()
+
+            # change this out for something else
+            x = np.linspace(0, 2 * np.pi, 100)
+            yield Plot(x, np.sin(x), id="plot")
 
         # Create log and command widget.
         log = ChannelEnvironmentLog()
@@ -99,7 +107,7 @@ class ChannelEnvironmentDisplay(Static):
         log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
-        # yield Placeholder("util (under construction)", classes="util")
+        yield Placeholder("util (under construction)", classes="util")
 
     @staticmethod
     def create(

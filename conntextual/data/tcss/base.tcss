@@ -4,8 +4,18 @@ ChannelEnvironmentDisplay {
     height: 1fr;
 }
 
+.test {
+    width: 1;
+}
+
 TabPane {
     padding: 0;
+}
+
+Plot {
+    width: 1fr;
+    height: 100%;
+    margin: 0;
 }
 
 .channels {
@@ -14,9 +24,12 @@ TabPane {
     scrollbar-size: 1 1;
 }
 
-# column-span: 2;
 ChannelEnvironmentLog {
-    column-span: 3;
+    column-span: 2;
+    height: 100%;
+}
+
+.util {
     height: 100%;
 }
 
@@ -24,10 +37,6 @@ Log {
     color: $text;
     background: $primary-background;
     scrollbar-size: 1 1;
-}
-
-.util {
-    height: 100%;
 }
 
 .command_input {
