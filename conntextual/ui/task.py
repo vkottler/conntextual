@@ -45,7 +45,7 @@ class TuiDispatchTask(ArbiterTask):
         """Extra actions to perform when this task is stopping."""
 
         # Ensure that the app task is awaited.
-        self.tui.exit()
+        await self.tui.action_quit()
         await self.tui_task
 
 

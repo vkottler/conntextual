@@ -157,3 +157,8 @@ class Base(App[None]):
         result.composed = asyncio.Event()
 
         return result
+
+    async def action_quit(self) -> None:
+        """Stop the rest of the application when quitting."""
+        await super().action_quit()
+        self.model.app.stop.set()
