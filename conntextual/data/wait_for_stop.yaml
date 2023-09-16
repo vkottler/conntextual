@@ -1,0 +1,6 @@
+---
+includes:
+  - app.yaml
+
+app:
+  - runtimepy.net.apps.wait_for_stop

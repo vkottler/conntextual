@@ -55,7 +55,7 @@ def add_ui_cmd(parser: _ArgumentParser) -> _CommandFunction:
     parser.add_argument(
         "-v",
         "--variant",
-        choices=[DEFAULT_VARIANT, "curses"],
+        choices=[DEFAULT_VARIANT, "curses", "wait_for_stop"],
         default=DEFAULT_VARIANT,
         help="application variant to use (default: %(default)s)",
     )
