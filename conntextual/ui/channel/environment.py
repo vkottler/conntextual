@@ -11,7 +11,7 @@ from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Placeholder, Static
+from textual.widgets import DataTable, Static
 from vcorelib.logging import LoggerType
 
 # internal
@@ -92,8 +92,6 @@ class ChannelEnvironmentDisplay(Static):
             fixed_columns=len(COLUMNS), classes="channels"
         )
 
-        yield Placeholder("plot (under construction)", classes="plot")
-
         # Create log and command widget.
         log = ChannelEnvironmentLog()
         log.parent_name = self.model.name
@@ -101,7 +99,7 @@ class ChannelEnvironmentDisplay(Static):
         log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
-        yield Placeholder("util (under construction)", classes="util")
+        # yield Placeholder("util (under construction)", classes="util")
 
     @staticmethod
     def create(
