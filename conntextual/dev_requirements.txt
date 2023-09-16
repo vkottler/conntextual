@@ -10,5 +10,6 @@ vmklib
 sphinx
 sphinx-book-theme
 setuptools-wrapper
-types-setuptools
 textual-dev
+types-psutil
+types-setuptools
