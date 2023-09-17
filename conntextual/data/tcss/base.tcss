@@ -4,16 +4,12 @@ ChannelEnvironmentDisplay {
     height: 1fr;
 }
 
-.test {
-    width: 1;
-}
-
 TabPane {
     padding: 0;
 }
 
 Plot {
-    width: 1fr;
+    width: 2fr;
     height: 100%;
     margin: 0;
 }
@@ -21,15 +17,14 @@ Plot {
 .channels {
     row-span: 2;
     column-span: 3;
+}
+
+DataTable {
     scrollbar-size: 1 1;
 }
 
 ChannelEnvironmentLog {
     column-span: 2;
-    height: 100%;
-}
-
-.util {
     height: 100%;
 }
 
@@ -42,10 +37,15 @@ Log {
 .command_input {
     padding: 0;
     border: hidden;
-    background: $primary-background-darken-2;
+    background: $accent;
 }
 
 .command_input:focus {
     border: hidden;
-    background: $primary-background-darken-1;
+    background: $panel;
+}
+
+.command_input:hover {
+    border: hidden;
+    background: $primary;
 }

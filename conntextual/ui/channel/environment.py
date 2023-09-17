@@ -3,51 +3,32 @@ A module implementing user interface elements for channel environments.
 """
 
 # built-in
-from typing import List, Optional, Tuple, Union
+from typing import Dict, List, Tuple, Union
 
 # third-party
-import numpy as np
 from rich.text import Text
 from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
-from runtimepy.enum import RuntimeEnum
-from runtimepy.primitives.type import AnyPrimitiveType
-from textual._color_constants import COLOR_NAME_TO_RGB
+from runtimepy.net.arbiter import AppInfo
+from textual import on
 from textual.app import ComposeResult
-from textual.color import Color
-from textual.containers import HorizontalScroll
+from textual.containers import HorizontalScroll, ScrollableContainer
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Placeholder, Static
+from textual.widgets import DataTable, Pretty, Static
 from vcorelib.logging import LoggerType
 
 # internal
+from conntextual.ui.channel.color import type_str_style
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
 from conntextual.ui.channel.plot import Plot
+from conntextual.ui.channel.selected import SelectedChannel
 from conntextual.ui.channel.suggester import CommandSuggester
 
 __all__ = ["ChannelEnvironmentDisplay"]
 COLUMNS = ["id", "type", "name", "value"]
 DEFAULT_VALUE_COL_WIDTH = 25
-STALE_THRESHOLD_NS = 500000000
-
-
-def type_str_style(kind: AnyPrimitiveType, enum: Optional[RuntimeEnum]) -> str:
-    """Get a style for a given type."""
-
-    result = ""
-
-    if kind.is_boolean:
-        result = Color(*COLOR_NAME_TO_RGB["ansi_bright_cyan"]).hex
-    elif kind.is_float:
-        result = Color(*COLOR_NAME_TO_RGB["indigo"]).hex
-    else:
-        result = Color(*COLOR_NAME_TO_RGB["purple"]).hex
-
-    if enum is not None:
-        result += " bold"
-
-    return result
+STALE_THRESHOLD_NS = 500_000_000
 
 
 class ChannelEnvironmentDisplay(Static):
@@ -56,6 +37,9 @@ class ChannelEnvironmentDisplay(Static):
     model: Model
 
     by_index: List[Tuple[Coordinate, AnyChannel]]
+    channels_by_row: Dict[int, SelectedChannel]
+
+    selected: SelectedChannel
 
     def on_mount(self) -> None:
         """Populate channel table."""
@@ -91,7 +75,28 @@ class ChannelEnvironmentDisplay(Static):
                 * max(len(str(env.value(chan.id))), DEFAULT_VALUE_COL_WIDTH),
             )
             self.by_index.append((Coordinate(row_idx, value_column), chan))
+            self.channels_by_row[row_idx] = SelectedChannel.create(
+                name, (chan, enum)
+            )
             row_idx += 1
+
+    def switch_to_channel(self, row: int) -> None:
+        """Switch the plot to a channel at the specified row."""
+
+        # Select channel.
+        self.selected = self.channels_by_row[row]
+        self.selected.reset()
+
+        # Update plot parameters.
+        plot = self.query_one(Plot)
+        plot.title = self.selected.name
+        plot.set_data(self.selected.timestamps, self.selected.values)
+
+    @on(DataTable.CellSelected)
+    def handle_cell_selected(self, event: DataTable.CellSelected) -> None:
+        """Handle input submission."""
+
+        self.switch_to_channel(event.coordinate.row)
 
     def update_channels(self) -> None:
         """Update all channel values."""
@@ -118,7 +123,9 @@ class ChannelEnvironmentDisplay(Static):
         # Update logs.
         self.query_one(ChannelEnvironmentLog).dispatch()
 
-        self.query_one(Plot).shift_data()
+        # Update plot.
+        self.selected.poll()
+        self.query_one(Plot).dispatch()
 
     @property
     def label(self) -> str:
@@ -131,9 +138,12 @@ class ChannelEnvironmentDisplay(Static):
         with HorizontalScroll(classes="channels"):
             yield DataTable[Union[str, int, float]]()
 
-            # change this out for something else
-            x = np.linspace(0, 2 * np.pi, 100)
-            yield Plot(x, np.sin(x), id="plot")
+            yield Plot(
+                self.selected.timestamps,
+                self.selected.values,
+                title=self.selected.name,
+                id="plot",
+            )
 
         # Create log and command widget.
         log = ChannelEnvironmentLog()
@@ -142,7 +152,8 @@ class ChannelEnvironmentDisplay(Static):
         log.suggester = CommandSuggester.create(self.model.env, log.logger)
         yield log
 
-        yield Placeholder("util (under construction)", classes="util")
+        with ScrollableContainer():
+            yield Pretty(self.model.app.config.get("root", {}))
 
     @staticmethod
     def create(
@@ -150,10 +161,16 @@ class ChannelEnvironmentDisplay(Static):
         env: ChannelEnvironment,
         source: ChannelEnvironmentSource,
         logger: LoggerType,
+        app: AppInfo,
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
         result = ChannelEnvironmentDisplay(id=name)
-        result.model = Model(name, env, source, logger)
+        result.model = Model(name, env, source, logger, app)
         result.by_index = []
+        result.channels_by_row = {}
+
+        first_name = next(env.names)
+        result.selected = SelectedChannel.create(first_name, env[first_name])
+
         return result

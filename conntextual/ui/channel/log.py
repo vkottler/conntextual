@@ -78,8 +78,6 @@ class ChannelEnvironmentLog(Static):
         if self.logger is not Logger.root:
             self.logger.info("Queue handler initialized.")
 
-        yield Log(classes="log", max_lines=MAX_LINES)
-
         if self.suggester is not None:
             input_box = InputWithHistory(
                 "set ",
@@ -89,3 +87,5 @@ class ChannelEnvironmentLog(Static):
             )
             input_box.previous = ""
             yield input_box
+
+        yield Log(classes="log", max_lines=MAX_LINES)

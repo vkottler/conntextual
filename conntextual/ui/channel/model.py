@@ -6,8 +6,10 @@ A module implementing a data model for channel environments.
 from dataclasses import dataclass
 from enum import StrEnum
 
-# third-party
 from runtimepy.channel.environment import ChannelEnvironment
+
+# third-party
+from runtimepy.net.arbiter import AppInfo
 from vcorelib.logging import LoggerType
 
 
@@ -27,3 +29,4 @@ class Model:
     env: ChannelEnvironment
     source: ChannelEnvironmentSource
     logger: LoggerType
+    app: AppInfo
