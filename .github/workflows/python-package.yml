@@ -66,7 +66,7 @@ jobs:
 
       - run: |
           mk python-release owner=vkottler \
-                            repo=conntextual version=1.1.0
+                            repo=conntextual version=1.1.1
         if: |
           matrix.python-version == '3.11'
           && matrix.system == 'ubuntu-latest'

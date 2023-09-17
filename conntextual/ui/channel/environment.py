@@ -16,6 +16,7 @@ from textual.containers import HorizontalScroll, ScrollableContainer
 from textual.coordinate import Coordinate
 from textual.widgets import DataTable, Pretty, Static
 from vcorelib.logging import LoggerType
+from vcorelib.math import to_nanos
 
 # internal
 from conntextual.ui.channel.color import type_str_style
@@ -28,7 +29,7 @@ from conntextual.ui.channel.suggester import CommandSuggester
 __all__ = ["ChannelEnvironmentDisplay"]
 COLUMNS = ["id", "type", "name", "value"]
 DEFAULT_VALUE_COL_WIDTH = 25
-STALE_THRESHOLD_NS = 500_000_000
+STALE_THRESHOLD_NS = to_nanos(0.5)
 
 
 class ChannelEnvironmentDisplay(Static):
