@@ -8,35 +8,44 @@ TabPane {
     padding: 0;
 }
 
+Plot {
+    width: 2fr;
+    height: 100%;
+    margin: 0;
+}
+
 .channels {
     row-span: 2;
     column-span: 3;
+}
+
+DataTable {
     scrollbar-size: 1 1;
 }
 
-# column-span: 2;
 ChannelEnvironmentLog {
-    column-span: 3;
+    column-span: 2;
     height: 100%;
 }
 
 Log {
     color: $text;
     background: $primary-background;
-    scrollbar-size: 1 1;
-}
-
-.util {
-    height: 100%;
+    scrollbar-size: 1 2;
 }
 
 .command_input {
     padding: 0;
     border: hidden;
-    background: $primary-background-darken-2;
+    background: $accent;
 }
 
 .command_input:focus {
     border: hidden;
-    background: $primary-background-darken-1;
+    background: $panel;
+}
+
+.command_input:hover {
+    border: hidden;
+    background: $primary;
 }

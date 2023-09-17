@@ -3,3 +3,6 @@ max-attributes=11
 
 [MESSAGES CONTROL]
 disable=too-few-public-methods
+
+[FORMAT]
+good-names=id,x,y,tx,rx,i

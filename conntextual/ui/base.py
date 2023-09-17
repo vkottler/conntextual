@@ -124,7 +124,11 @@ class Base(App[None]):
         # Channels for tasks and connections.
         self.model.environments += [
             ChannelEnvironmentDisplay.create(
-                name, task.env, ChannelEnvironmentSource.TASK, task.logger
+                name,
+                task.env,
+                ChannelEnvironmentSource.TASK,
+                task.logger,
+                self.model.app,
             )
             for name, task in self.model.app.tasks.items()
         ] + [
@@ -133,6 +137,7 @@ class Base(App[None]):
                 conn.env,
                 ChannelEnvironmentSource.CONNECTION_LOCAL,
                 conn.logger,
+                self.model.app,
             )
             for name, conn in self.model.app.connections.items()
         ]

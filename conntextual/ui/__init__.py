@@ -44,6 +44,20 @@ class MockEvent:
     value: str
 
 
+@dataclass
+class MockCoordinate:
+    """A mock coordinate class."""
+
+    row: int
+
+
+@dataclass
+class MockCellEvent:
+    """A mock cell-selection event class."""
+
+    coordinate: MockCoordinate
+
+
 async def tui_test(tui: Base) -> None:
     """Test the UI."""
 
@@ -75,6 +89,10 @@ async def tui_test(tui: Base) -> None:
 
         processor.get_suggestion("set m")
         processor.get_suggestion("set e")
+
+        env.handle_cell_selected(
+            MockCellEvent(MockCoordinate(1)),  # type: ignore
+        )
 
         for command in [
             "test",
