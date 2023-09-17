@@ -1,7 +1,7 @@
 ---
 clients:
   - factory: udp_json
-    name: udp_json_client
+    name: test.udp_json_client
     defer: true
     kwargs:
       remote_addr: [localhost, "$udp_json"]

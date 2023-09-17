@@ -8,6 +8,7 @@ from contextlib import suppress
 import logging
 import os
 from pathlib import Path
+from typing import Optional
 
 # third-party
 from runtimepy.channel.environment import ChannelEnvironment
@@ -37,6 +38,7 @@ class Base(App[None]):
         ("space", "toggle_pause", "toggle pause"),
         ("d", "toggle_dark", "toggle dark mode"),
         ("g", "screenshot", "take a screenshot"),
+        ("r", "refresh_plot", "refresh plot"),
         Binding(Keys.Tab, "tab(True)", "Next tab", priority=True),
         Binding(Keys.BackTab, "tab(False)", "Previous tab", priority=True),
     ]
@@ -101,22 +103,39 @@ class Base(App[None]):
     def dispatch(self) -> None:
         """Update channel values."""
 
-        loop = asyncio.get_running_loop()
-        self.model.uptime.value = loop.time() - self.model.start
+        self.model.uptime.value = (
+            asyncio.get_running_loop().time() - self.model.start
+        )
 
         if not self.model.paused:
-            # Only update elements under the active tab.
-            tabs = self.tabs
-            curr = tabs.active
-            if not curr:
-                return
+            env = self.current_channel_environment
+            if env is not None:
+                env.update_channels()
 
-            with suppress(NoMatches):
+    @property
+    def current_channel_environment(
+        self,
+    ) -> Optional[ChannelEnvironmentDisplay]:
+        """Get the current channel-environment display."""
+
+        env = None
+
+        with suppress(NoMatches):
+            curr = self.tabs.active
+            if curr:
                 env = self.query_one(
                     f"#{self.model.tab_to_id[curr]}",
                     expect_type=ChannelEnvironmentDisplay,
                 )
-                env.update_channels()
+
+        return env
+
+    def action_refresh_plot(self) -> None:
+        """Refresh the current plot."""
+
+        env = self.current_channel_environment
+        if env is not None:
+            env.reset_plot()
 
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""
@@ -145,7 +164,8 @@ class Base(App[None]):
         # One indexed tabs automatically enumerate for the tabbed environment,
         # keep a mapping of tabs index to element identifier.
         for idx, env in enumerate(self.model.environments):
-            self.model.tab_to_id[f"tab-{1 + idx}"] = env.model.name
+            assert env.id is not None
+            self.model.tab_to_id[f"tab-{1 + idx}"] = env.id
 
     def compose(self) -> ComposeResult:
         """Create child nodes."""
