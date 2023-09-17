@@ -3,17 +3,14 @@ A module implementing user interface elements for channel environments.
 """
 
 # built-in
-from typing import List, Tuple, Union
+from typing import Dict
 
 # third-party
 import numpy as np
-from rich.text import Text
-from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
 from textual.app import ComposeResult
-from textual.containers import HorizontalScroll
-from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Placeholder, Static
+from textual.containers import HorizontalScroll, VerticalScroll
+from textual.widgets import Placeholder, Static
 from vcorelib.logging import LoggerType
 
 # internal
@@ -21,9 +18,69 @@ from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
 from conntextual.ui.channel.plot import Plot
 from conntextual.ui.channel.suggester import CommandSuggester
+from conntextual.ui.channel.table import ChannelRow, ChannelTable
 
 __all__ = ["ChannelEnvironmentDisplay"]
-COLUMNS = ["id", "type", "name", "value"]
+
+
+class ChannelList(Static):
+    """A channel list widget."""
+
+    model: Model
+    table: ChannelTable
+    values: Dict[ChannelRow, Static]
+
+    def compute_grid(self) -> None:
+        """Set grid parameters."""
+
+        self.styles.grid_size_rows = self.table.height
+        self.styles.grid_size_columns = len(self.table.columns)
+        self.styles.grid_columns = [
+            self.table.id_width + 1,
+            self.table.type_width + 1,
+            self.table.name_width + 1,
+            self.table.value_width + 1,
+        ]
+
+    def compose(self) -> ComposeResult:
+        """Create child nodes."""
+
+        self.compute_grid()
+
+        for label in self.table.columns:
+            yield Static(label)
+
+        for row in self.table.rows:
+            yield Static(str(row.identifier))
+            yield Static(row.kind_str(self.table.env))
+            yield Static(row.name)
+
+            value = Static(row.value_str(), classes="value")
+            self.values[row] = value
+            yield value
+
+    @staticmethod
+    def create(model: Model, **kwargs) -> "ChannelList":
+        """Create a channel list."""
+
+        result = ChannelList(**kwargs)
+        result.model = model
+        result.table = ChannelTable(model.env)
+        result.values = {}
+        return result
+
+    def update_channels(self) -> None:
+        """Update all channel values."""
+
+        self.table.update_values()
+
+        for row, value in self.values.items():
+            curr = value.renderable
+            new = row.value_str()
+
+            if curr != new:
+                value.renderable = row.value_str()
+                value.refresh()
 
 
 class ChannelEnvironmentDisplay(Static):
@@ -31,58 +88,11 @@ class ChannelEnvironmentDisplay(Static):
 
     model: Model
 
-    by_index: List[Tuple[Coordinate, AnyChannel]]
-
-    def on_mount(self) -> None:
-        """Populate channel table."""
-
-        table = self.query_one(DataTable)
-        env = self.model.env
-        names = list(env.names)
-
-        # Set up columns.
-        table.add_columns(*COLUMNS)
-        value_column: int = COLUMNS.index("value")
-
-        row_idx = 0
-
-        for name in names:
-            chan, enum = env[name]
-
-            kind_str = str(chan.type)
-
-            # Should handle enums at some point.
-            if enum is not None:
-                enum_name = env.enums.names.name(enum.id)
-                assert enum_name is not None
-                kind_str = enum_name
-
-            table.add_row(
-                chan.id,
-                kind_str,
-                name
-                if not chan.commandable
-                else Text(name, style="bold green"),
-                env.value(chan.id),
-            )
-            self.by_index.append((Coordinate(row_idx, value_column), chan))
-            row_idx += 1
-
     def update_channels(self) -> None:
         """Update all channel values."""
 
-        env = self.model.env
-        table = self.query_one(DataTable)
-
-        for coord, chan in self.by_index:
-            val = env.value(chan.id)
-            if isinstance(val, float):
-                val = f"{val:.3f}"
-            table.update_cell_at(coord, val)
-
-        # Update logs.
+        self.query_one(ChannelList).update_channels()
         self.query_one(ChannelEnvironmentLog).dispatch()
-
         self.query_one(Plot).shift_data()
 
     @property
@@ -94,7 +104,8 @@ class ChannelEnvironmentDisplay(Static):
         """Create child nodes."""
 
         with HorizontalScroll(classes="channels"):
-            yield DataTable[Union[str, int, float]]()
+            with VerticalScroll(classes="list-container"):
+                yield ChannelList.create(self.model)
 
             # change this out for something else
             x = np.linspace(0, 2 * np.pi, 100)
@@ -120,5 +131,4 @@ class ChannelEnvironmentDisplay(Static):
 
         result = ChannelEnvironmentDisplay(id=name)
         result.model = Model(name, env, source, logger)
-        result.by_index = []
         return result

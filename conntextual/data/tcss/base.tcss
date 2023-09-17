@@ -4,16 +4,12 @@ ChannelEnvironmentDisplay {
     height: 1fr;
 }
 
-.test {
-    width: 1;
-}
-
 TabPane {
     padding: 0;
 }
 
 Plot {
-    width: 1fr;
+    width: 50%;
     height: 100%;
     margin: 0;
 }
@@ -22,6 +18,25 @@ Plot {
     row-span: 2;
     column-span: 3;
     scrollbar-size: 1 1;
+}
+
+.red {
+    background: red;
+}
+
+.blue {
+    background: blue;
+}
+
+.list-container {
+    width: auto;
+}
+
+ChannelList {
+    layout: grid;
+    width: auto;
+    padding: 0 2 0 0;
+    grid-gutter: 0 1;
 }
 
 ChannelEnvironmentLog {
