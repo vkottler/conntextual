@@ -11,15 +11,17 @@ from textual import on
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.widgets import Input, Log, Static
-from vcorelib.logging import LoggerType, LogRecordQueue, queue_handler
+from vcorelib.logging import (
+    DEFAULT_TIME_FORMAT,
+    LoggerType,
+    LogRecordQueue,
+    queue_handler,
+)
 
 # internal
 from conntextual.ui.channel.suggester import CommandSuggester
 
 MAX_LINES = 1000
-DEFAULT_FORMAT = Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
 
 
 class InputWithHistory(Input):
@@ -74,7 +76,7 @@ class ChannelEnvironmentLog(Static):
 
         # Initialize logger handling.
         self.queue, handler = queue_handler(self.logger, root_formatter=False)
-        handler.setFormatter(DEFAULT_FORMAT)
+        handler.setFormatter(Formatter(DEFAULT_TIME_FORMAT))
         if self.logger is not Logger.root:
             self.logger.info("Queue handler initialized.")
 

@@ -23,10 +23,7 @@ def ui_cmd(args: _Namespace) -> int:
 
     cli_args = ["runtimepy"]
 
-    flags = set(forward_flags(args, ["curses", "verbose"]))
-
-    if args.no_uvloop:
-        flags.add("--no-uvloop")
+    flags = set(forward_flags(args, ["curses", "verbose", "no_uvloop"]))
 
     # Don't initialize regular logging no matter what.
     flags.add("--quiet")
