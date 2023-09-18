@@ -8,7 +8,6 @@ from contextlib import suppress
 import logging
 import os
 from pathlib import Path
-import re
 from typing import Optional
 
 # third-party
@@ -24,6 +23,7 @@ from textual.widgets import Input, TabbedContent
 # internal
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
 from conntextual.ui.channel.model import ChannelEnvironmentSource
+from conntextual.ui.channel.pattern import PatternPair
 from conntextual.ui.footer import CustomFooter
 from conntextual.ui.model import Model
 
@@ -49,6 +49,8 @@ class Base(App[None]):
 
     model: Model
     composed: asyncio.Event
+
+    tab_pattern: PatternPair
 
     def action_toggle_pause(self) -> None:
         """Toggle pause state."""
@@ -151,21 +153,13 @@ class Base(App[None]):
         Determine if a task tab should be created for a task with a given name.
         """
 
-        # Determine a place to load this from configuration data.
-        del name
+        return name == "tui" or self.tab_pattern.matches(name)
 
-        return True
-
-    def _get_env_channel_pattern(self, name: str) -> Optional[re.Pattern[str]]:
+    def _get_env_channel_pattern(self, name: str) -> PatternPair:
         """Get a channel-include pattern for a particular environment."""
 
         patterns = self.model.app.config.get("channel_patterns", {})
-        result = patterns.get(name)  # type: ignore
-
-        if result is not None:
-            result = re.compile(result)
-
-        return result
+        return PatternPair.from_dict(patterns.get(name, {}))  # type: ignore
 
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""
@@ -221,6 +215,9 @@ class Base(App[None]):
         result = Base()
         result.model = Model.create(app, env)
         result.composed = asyncio.Event()
+        result.tab_pattern = PatternPair.from_dict(
+            app.config.get("tab_pattern", {}),  # type: ignore
+        )
 
         return result
 

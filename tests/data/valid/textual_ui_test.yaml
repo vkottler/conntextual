@@ -9,6 +9,12 @@ config:
   debug: true
   headless: true
 
+  tab_pattern:
+    include: ".*"
+
   channel_patterns:
-    sample: ".*"
-    udp_json_server: "metrics"
+    sample:
+      include: ".*"
+    udp_json_server:
+      include: "metrics"
+      exclude: "tx"

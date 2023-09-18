@@ -4,7 +4,6 @@ A module implementing user interface elements for channel environments.
 
 # built-in
 import random
-import re
 from typing import Dict, List, Optional, Tuple, Union
 
 # third-party
@@ -26,6 +25,7 @@ from vcorelib.math import to_nanos
 from conntextual.ui.channel.color import bit_field_style, type_str_style
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
+from conntextual.ui.channel.pattern import PatternPair
 from conntextual.ui.channel.plot import Plot
 from conntextual.ui.channel.selected import SelectedChannel
 from conntextual.ui.channel.suggester import CommandSuggester
@@ -51,7 +51,8 @@ class ChannelEnvironmentDisplay(Static):
 
     selected: SelectedChannel
     row_idx: int
-    channel_pattern: Optional[re.Pattern[str]]
+
+    channel_pattern: PatternPair
 
     def add_channel(
         self, name: str, chan: AnyChannel, enum: Optional[RuntimeEnum]
@@ -94,16 +95,6 @@ class ChannelEnvironmentDisplay(Static):
             " " * max(len(str(env.value(name))), DEFAULT_VALUE_COL_WIDTH),
         )
 
-    def channel_matches(self, name: str) -> bool:
-        """Determine if a given channel is enabled."""
-
-        result = True
-
-        if self.channel_pattern is not None:
-            result = self.channel_pattern.search(name) is not None
-
-        return result
-
     def on_mount(self) -> None:
         """Populate channel table."""
 
@@ -118,7 +109,7 @@ class ChannelEnvironmentDisplay(Static):
 
         ident: RegistryKey
         for name in names:
-            if not self.channel_matches(name):
+            if not self.channel_pattern.matches(name):
                 continue
 
             # Add channel rows.
@@ -236,7 +227,7 @@ class ChannelEnvironmentDisplay(Static):
         source: ChannelEnvironmentSource,
         logger: LoggerType,
         app: AppInfo,
-        channel_pattern: Optional[re.Pattern[str]] = None,
+        channel_pattern: PatternPair,
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
