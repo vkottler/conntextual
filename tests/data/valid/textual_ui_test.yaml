@@ -8,3 +8,7 @@ app:
 config:
   debug: true
   headless: true
+
+  channel_patterns:
+    sample: ".*"
+    udp_json_server: "metrics"

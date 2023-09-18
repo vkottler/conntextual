@@ -8,6 +8,7 @@ from contextlib import suppress
 import logging
 import os
 from pathlib import Path
+import re
 from typing import Optional
 
 # third-party
@@ -145,6 +146,27 @@ class Base(App[None]):
         if env is not None:
             env.reset_plot()
 
+    def ui_enabled(self, name: str) -> bool:
+        """
+        Determine if a task tab should be created for a task with a given name.
+        """
+
+        # Determine a place to load this from configuration data.
+        del name
+
+        return True
+
+    def _get_env_channel_pattern(self, name: str) -> Optional[re.Pattern[str]]:
+        """Get a channel-include pattern for a particular environment."""
+
+        patterns = self.model.app.config.get("channel_patterns", {})
+        result = patterns.get(name)  # type: ignore
+
+        if result is not None:
+            result = re.compile(result)
+
+        return result
+
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""
 
@@ -156,8 +178,10 @@ class Base(App[None]):
                 ChannelEnvironmentSource.TASK,
                 task.logger,
                 self.model.app,
+                channel_pattern=self._get_env_channel_pattern(name),
             )
             for name, task in self.model.app.tasks.items()
+            if self.ui_enabled(name)
         ] + [
             ChannelEnvironmentDisplay.create(
                 name,
@@ -165,8 +189,10 @@ class Base(App[None]):
                 ChannelEnvironmentSource.CONNECTION_LOCAL,
                 conn.logger,
                 self.model.app,
+                channel_pattern=self._get_env_channel_pattern(name),
             )
             for name, conn in self.model.app.connections.items()
+            if self.ui_enabled(name)
         ]
 
         # One indexed tabs automatically enumerate for the tabbed environment,

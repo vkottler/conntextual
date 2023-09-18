@@ -43,4 +43,4 @@ class SelectedChannel:
         # Need to handle not infinitely growing.
         if (not self.timestamps) or last_updated > self.timestamps[-1]:
             self.timestamps.append((last_updated - self.start_ns) / 1e9)
-            self.values.append(chan.raw.value)
+            self.values.append(chan.raw.scaled)
