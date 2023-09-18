@@ -238,7 +238,14 @@ class ChannelEnvironmentDisplay(Static):
         result.row_idx = 0
         result.channel_pattern = channel_pattern
 
-        name = random.choice(list(env.names))
-        result.selected = SelectedChannel.create(name, env[name])
+        names = list(env.names)
+        assert names
+
+        chan = None
+        while chan is None:
+            name = random.choice(names)
+            chan = env.get(name)
+
+        result.selected = SelectedChannel.create(name, chan)
 
         return result
