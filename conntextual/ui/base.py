@@ -23,6 +23,7 @@ from textual.widgets import Input, TabbedContent
 # internal
 from conntextual.ui.channel.environment import ChannelEnvironmentDisplay
 from conntextual.ui.channel.model import ChannelEnvironmentSource
+from conntextual.ui.channel.pattern import PatternPair
 from conntextual.ui.footer import CustomFooter
 from conntextual.ui.model import Model
 
@@ -48,6 +49,8 @@ class Base(App[None]):
 
     model: Model
     composed: asyncio.Event
+
+    tab_pattern: PatternPair
 
     def action_toggle_pause(self) -> None:
         """Toggle pause state."""
@@ -145,6 +148,19 @@ class Base(App[None]):
         if env is not None:
             env.reset_plot()
 
+    def ui_enabled(self, name: str) -> bool:
+        """
+        Determine if a task tab should be created for a task with a given name.
+        """
+
+        return name == "tui" or self.tab_pattern.matches(name)
+
+    def _get_env_channel_pattern(self, name: str) -> PatternPair:
+        """Get a channel-include pattern for a particular environment."""
+
+        patterns = self.model.app.config.get("channel_patterns", {})
+        return PatternPair.from_dict(patterns.get(name, {}))  # type: ignore
+
     def _init_environments(self) -> None:
         """Initialize channel-environment display instances."""
 
@@ -156,8 +172,10 @@ class Base(App[None]):
                 ChannelEnvironmentSource.TASK,
                 task.logger,
                 self.model.app,
+                channel_pattern=self._get_env_channel_pattern(name),
             )
             for name, task in self.model.app.tasks.items()
+            if self.ui_enabled(name)
         ] + [
             ChannelEnvironmentDisplay.create(
                 name,
@@ -165,8 +183,10 @@ class Base(App[None]):
                 ChannelEnvironmentSource.CONNECTION_LOCAL,
                 conn.logger,
                 self.model.app,
+                channel_pattern=self._get_env_channel_pattern(name),
             )
             for name, conn in self.model.app.connections.items()
+            if self.ui_enabled(name)
         ]
 
         # One indexed tabs automatically enumerate for the tabbed environment,
@@ -195,6 +215,9 @@ class Base(App[None]):
         result = Base()
         result.model = Model.create(app, env)
         result.composed = asyncio.Event()
+        result.tab_pattern = PatternPair.from_dict(
+            app.config.get("tab_pattern", {}),  # type: ignore
+        )
 
         return result
 

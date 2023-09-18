@@ -12,6 +12,11 @@ from textual._color_constants import COLOR_NAME_TO_RGB
 from textual.color import Color
 
 
+def bit_field_style() -> str:
+    """Get a style string for bit-field elements."""
+    return Color(*COLOR_NAME_TO_RGB["teal"]).hex
+
+
 def type_str_style(kind: AnyPrimitiveType, enum: Optional[RuntimeEnum]) -> str:
     """Get a style for a given type."""
 

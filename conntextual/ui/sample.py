@@ -10,6 +10,8 @@ from random import random
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.net.arbiter.task import ArbiterTask, TaskFactory
 from runtimepy.net.stream.json import JsonMessageConnection
+from runtimepy.primitives import Uint8
+from runtimepy.primitives.field import BitField, BitFlag
 
 
 class SampleTask(ArbiterTask):
@@ -52,6 +54,18 @@ class SampleTask(ArbiterTask):
 
         for name in ["a", "b", "c"]:
             with self.env.names_pushed(name):
+                with self.env.names_pushed("fields"):
+                    prim = Uint8()
+                    self.env.int_channel("raw", prim)
+
+                    # Add a bit field and flag.
+                    self.env.add_field(BitFlag("flag1", prim, 0))
+                    self.env.add_field(
+                        BitFlag("flag2", prim, 1, commandable=True)
+                    )
+                    self.env.add_field(BitField("field1", prim, 2, 2))
+                    self.env.add_field(BitField("field2", prim, 4, 4))
+
                 for i in range(10):
                     with self.env.names_pushed(str(i)):
                         self.env.float_channel("random", "double")

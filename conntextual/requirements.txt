@@ -1,5 +1,5 @@
 psutil
-runtimepy>=2.10.0
+runtimepy>=2.10.3
 textual
 uvloop
 plotext

@@ -4,13 +4,15 @@ A module implementing user interface elements for channel environments.
 
 # built-in
 import random
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 # third-party
 from rich.text import Text
 from runtimepy.channel import AnyChannel
 from runtimepy.channel.environment import ChannelEnvironment
+from runtimepy.enum import RuntimeEnum
 from runtimepy.net.arbiter import AppInfo
+from runtimepy.registry.name import RegistryKey
 from textual import on
 from textual.app import ComposeResult
 from textual.containers import HorizontalScroll, ScrollableContainer
@@ -20,15 +22,16 @@ from vcorelib.logging import LoggerType
 from vcorelib.math import to_nanos
 
 # internal
-from conntextual.ui.channel.color import type_str_style
+from conntextual.ui.channel.color import bit_field_style, type_str_style
 from conntextual.ui.channel.log import ChannelEnvironmentLog
 from conntextual.ui.channel.model import ChannelEnvironmentSource, Model
+from conntextual.ui.channel.pattern import PatternPair
 from conntextual.ui.channel.plot import Plot
 from conntextual.ui.channel.selected import SelectedChannel
 from conntextual.ui.channel.suggester import CommandSuggester
 
 __all__ = ["ChannelEnvironmentDisplay"]
-COLUMNS = ["id", "type", "name", "value"]
+COLUMNS = ["type", "name", "value"]
 DEFAULT_VALUE_COL_WIDTH = 22
 STALE_THRESHOLD_NS = to_nanos(0.5)
 
@@ -43,10 +46,54 @@ class ChannelEnvironmentDisplay(Static):
 
     model: Model
 
-    by_index: List[Tuple[Coordinate, AnyChannel]]
+    by_index: List[Tuple[Coordinate, RegistryKey]]
     channels_by_row: Dict[int, SelectedChannel]
 
     selected: SelectedChannel
+    row_idx: int
+
+    channel_pattern: PatternPair
+
+    def add_channel(
+        self, name: str, chan: AnyChannel, enum: Optional[RuntimeEnum]
+    ) -> int:
+        """Add a channel to the table."""
+
+        table = self.query_one(DataTable)
+        env = self.model.env
+
+        self.channels_by_row[self.row_idx] = SelectedChannel.create(
+            name, (chan, enum)
+        )
+
+        kind_str = str(chan.type)
+
+        # Should handle enums at some point.
+        if enum is not None:
+            enum_name = env.enums.names.name(enum.id)
+            assert enum_name is not None
+            kind_str = enum_name
+
+        table.add_row(
+            Text(kind_str, style=type_str_style(chan.type, enum)),
+            name if not chan.commandable else Text(name, style="bold green"),
+            " " * max(len(str(env.value(name))), DEFAULT_VALUE_COL_WIDTH),
+        )
+        return chan.id
+
+    def add_field(self, name: str) -> None:
+        """Add a bit-field row entry."""
+
+        table = self.query_one(DataTable)
+        env = self.model.env
+
+        field = env.fields[name]
+
+        table.add_row(
+            Text(f"(bit field) {field.where_str()}", style=bit_field_style()),
+            name if not field.commandable else Text(name, style="bold green"),
+            " " * max(len(str(env.value(name))), DEFAULT_VALUE_COL_WIDTH),
+        )
 
     def on_mount(self) -> None:
         """Populate channel table."""
@@ -58,54 +105,48 @@ class ChannelEnvironmentDisplay(Static):
 
         # Set up columns.
         table.add_columns(*COLUMNS)
-        value_column: int = COLUMNS.index("value")
+        val_col = COLUMNS.index("value")
 
-        row_idx = 0
-
+        ident: RegistryKey
         for name in names:
-            chan, enum = env[name]
+            if not self.channel_pattern.matches(name):
+                continue
 
-            kind_str = str(chan.type)
+            # Add channel rows.
+            chan_result = env.get(name)
+            if chan_result is not None:
+                chan, enum = chan_result
+                ident = self.add_channel(name, chan, enum)
 
-            # Should handle enums at some point.
-            if enum is not None:
-                enum_name = env.enums.names.name(enum.id)
-                assert enum_name is not None
-                kind_str = enum_name
+            # Add field and flag rows.
+            else:
+                self.add_field(name)
+                ident = name
 
-            table.add_row(
-                chan.id,
-                Text(kind_str, style=type_str_style(chan.type, enum)),
-                name
-                if not chan.commandable
-                else Text(name, style="bold green"),
-                " "
-                * max(len(str(env.value(chan.id))), DEFAULT_VALUE_COL_WIDTH),
-            )
-            self.by_index.append((Coordinate(row_idx, value_column), chan))
-            self.channels_by_row[row_idx] = SelectedChannel.create(
-                name, (chan, enum)
-            )
-            row_idx += 1
+            self.by_index.append((Coordinate(self.row_idx, val_col), ident))
+            self.row_idx += 1
 
     def switch_to_channel(self, row: int) -> None:
         """Switch the plot to a channel at the specified row."""
 
-        # Select channel.
-        self.selected = self.channels_by_row[row]
+        if row in self.channels_by_row:
+            # Select channel.
+            self.selected = self.channels_by_row[row]
 
-        # Update plot parameters.
-        name = self.selected.name
-        self.query_one(Plot).title = name
-        self.model.logger.info("Switched plot to channel '%s'.", name)
-        self.reset_plot()
+            # Update plot parameters.
+            name = self.selected.name
+            self.query_one(Plot).title = name
+            self.model.logger.info("Switched plot to channel '%s'.", name)
+            self.reset_plot()
 
     def random_channel(self) -> None:
         """Switch to a random channel."""
 
-        self.switch_to_channel(
-            random.choice(list(self.channels_by_row.keys()))
-        )
+        row = -1
+        while row not in self.channels_by_row:
+            row = random.randint(0, self.row_idx - 1)
+
+        self.switch_to_channel(row)
 
     def reset_plot(self) -> None:
         """Reset the selected plot."""
@@ -129,7 +170,7 @@ class ChannelEnvironmentDisplay(Static):
         table = self.query_one(DataTable)
 
         for coord, chan in self.by_index:
-            val = env.value(chan.id)
+            val = env.value(chan)
             if isinstance(val, float):
                 val = f"{val: 15.6f}"
             elif isinstance(val, bool):
@@ -138,7 +179,7 @@ class ChannelEnvironmentDisplay(Static):
                 val = f"{val: 8d}       "
 
             # Get the age of the primitive.
-            age = env[chan.id][0].raw.age_ns()
+            age = env.age_ns(chan)
             if age > STALE_THRESHOLD_NS:
                 val = Text(val, style="yellow")  # type: ignore
 
@@ -186,6 +227,7 @@ class ChannelEnvironmentDisplay(Static):
         source: ChannelEnvironmentSource,
         logger: LoggerType,
         app: AppInfo,
+        channel_pattern: PatternPair,
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
@@ -193,6 +235,8 @@ class ChannelEnvironmentDisplay(Static):
         result.model = Model(name, env, source, logger, app)
         result.by_index = []
         result.channels_by_row = {}
+        result.row_idx = 0
+        result.channel_pattern = channel_pattern
 
         name = random.choice(list(env.names))
         result.selected = SelectedChannel.create(name, env[name])

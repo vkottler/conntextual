@@ -8,3 +8,13 @@ app:
 config:
   debug: true
   headless: true
+
+  tab_pattern:
+    include: ".*"
+
+  channel_patterns:
+    sample:
+      include: ".*"
+    udp_json_server:
+      include: "metrics"
+      exclude: "tx"
