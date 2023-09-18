@@ -9,7 +9,7 @@ TabPane {
 }
 
 Plot {
-    width: 2fr;
+    width: 3fr;
     height: 100%;
     margin: 0;
 }
@@ -20,6 +20,7 @@ Plot {
 }
 
 DataTable {
+    width: 2fr;
     scrollbar-size: 1 1;
     min-height: 100%;
 }
@@ -31,7 +32,7 @@ ChannelEnvironmentLog {
 
 Log {
     color: $text;
-    background: $primary-background;
+    background: $surface;
     scrollbar-size: 1 2;
 }
 
