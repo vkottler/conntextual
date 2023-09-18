@@ -33,6 +33,9 @@ def ui_cmd(args: _Namespace) -> int:
     cli_args.append("arbiter")
     cli_args.extend(list(forward_flags(args, ["init_only"])))
 
+    # Always wait for the program to exit.
+    cli_args.append("-w")
+
     cli_args.extend(args.configs)
     cli_args.append(f"package://{args.package}/{args.variant}.yaml")
 
@@ -52,7 +55,7 @@ def add_ui_cmd(parser: _ArgumentParser) -> _CommandFunction:
     parser.add_argument(
         "-v",
         "--variant",
-        choices=[DEFAULT_VARIANT, "curses", "wait_for_stop"],
+        choices=[DEFAULT_VARIANT, "curses"],
         default=DEFAULT_VARIANT,
         help="application variant to use (default: %(default)s)",
     )

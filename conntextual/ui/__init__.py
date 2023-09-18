@@ -95,6 +95,7 @@ async def tui_test(tui: Base) -> None:
         )
 
         tui.action_refresh_plot()
+        tui.action_random_channel()
 
         for command in [
             "test",

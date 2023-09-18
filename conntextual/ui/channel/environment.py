@@ -3,6 +3,7 @@ A module implementing user interface elements for channel environments.
 """
 
 # built-in
+import random
 from typing import Dict, List, Tuple, Union
 
 # third-party
@@ -28,7 +29,7 @@ from conntextual.ui.channel.suggester import CommandSuggester
 
 __all__ = ["ChannelEnvironmentDisplay"]
 COLUMNS = ["id", "type", "name", "value"]
-DEFAULT_VALUE_COL_WIDTH = 25
+DEFAULT_VALUE_COL_WIDTH = 22
 STALE_THRESHOLD_NS = to_nanos(0.5)
 
 
@@ -52,6 +53,7 @@ class ChannelEnvironmentDisplay(Static):
 
         table = self.query_one(DataTable)
         env = self.model.env
+        assert env.finalized
         names = list(env.names)
 
         # Set up columns.
@@ -97,6 +99,13 @@ class ChannelEnvironmentDisplay(Static):
         self.query_one(Plot).title = name
         self.model.logger.info("Switched plot to channel '%s'.", name)
         self.reset_plot()
+
+    def random_channel(self) -> None:
+        """Switch to a random channel."""
+
+        self.switch_to_channel(
+            random.choice(list(self.channels_by_row.keys()))
+        )
 
     def reset_plot(self) -> None:
         """Reset the selected plot."""
@@ -185,7 +194,7 @@ class ChannelEnvironmentDisplay(Static):
         result.by_index = []
         result.channels_by_row = {}
 
-        first_name = next(env.names)
-        result.selected = SelectedChannel.create(first_name, env[first_name])
+        name = random.choice(list(env.names))
+        result.selected = SelectedChannel.create(name, env[name])
 
         return result
