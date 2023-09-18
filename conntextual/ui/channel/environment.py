@@ -17,7 +17,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.containers import HorizontalScroll, ScrollableContainer
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, Pretty, Static
+from textual.widgets import Collapsible, DataTable, Pretty, Static
 from vcorelib.logging import LoggerType
 from vcorelib.math import to_nanos
 
@@ -90,7 +90,10 @@ class ChannelEnvironmentDisplay(Static):
         field = env.fields[name]
 
         table.add_row(
-            Text(f"(bit field) {field.where_str()}", style=bit_field_style()),
+            Text(
+                f"{'bit' if field.width == 1 else 'bits'} {field.where_str()}",
+                style=bit_field_style(),
+            ),
             name if not field.commandable else Text(name, style="bold green"),
             " " * max(len(str(env.value(name))), DEFAULT_VALUE_COL_WIDTH),
         )
@@ -218,7 +221,8 @@ class ChannelEnvironmentDisplay(Static):
         yield log
 
         with ScrollableContainer():
-            yield Pretty(self.model.app.config.get("root", {}))
+            with Collapsible(title="configuration"):
+                yield Pretty(self.model.app.config.get("root", {}))
 
     @staticmethod
     def create(
