@@ -62,6 +62,14 @@ class SampleTask(ArbiterTask):
                         )
                         self.env.bool_channel("bool")
                         self.env.int_channel("int", commandable=True)
+                        self.env.int_channel(
+                            "scaled_int", commandable=True, scaling=[1.0, 2.0]
+                        )
+                        self.env.int_channel(
+                            "scaled_float",
+                            commandable=True,
+                            scaling=[2.0, 3.0],
+                        )
 
     async def dispatch(self) -> bool:
         """Dispatch an iteration of this task."""
@@ -73,11 +81,14 @@ class SampleTask(ArbiterTask):
             # Update local channels.
             for name in ["a", "b", "c"]:
                 for i in range(10):
-                    self.env.set(f"{name}.{i}.random", random())
+                    name_string = name + "." + str(i)
                     self.env.set(
-                        f"{name}.{i}.enum", ((dispatches + i) % 10) + 1
+                        f"{name_string}.enum", ((dispatches + i) % 10) + 1
                     )
-                    self.env.set(f"{name}.{i}.bool", i % 2 == 0)
+                    self.env.set(f"{name_string}.bool", i % 2 == 0)
+
+                    for chan in ["random"]:
+                        self.env.set(f"{name_string}.{chan}", random())
 
             # Interact with connections.
             await asyncio.gather(

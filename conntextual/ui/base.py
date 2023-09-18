@@ -39,6 +39,7 @@ class Base(App[None]):
         ("d", "toggle_dark", "toggle dark mode"),
         ("g", "screenshot", "take a screenshot"),
         ("r", "refresh_plot", "refresh plot"),
+        ("R", "random_channel", "plot random channel"),
         Binding(Keys.Tab, "tab(True)", "Next tab", priority=True),
         Binding(Keys.BackTab, "tab(False)", "Previous tab", priority=True),
     ]
@@ -129,6 +130,13 @@ class Base(App[None]):
                 )
 
         return env
+
+    def action_random_channel(self) -> None:
+        """Randomize the channel on the current tab."""
+
+        env = self.current_channel_environment
+        if env is not None:
+            env.random_channel()
 
     def action_refresh_plot(self) -> None:
         """Refresh the current plot."""

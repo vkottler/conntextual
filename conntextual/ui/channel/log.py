@@ -36,6 +36,7 @@ class InputWithHistory(Input):
 
         if self.previous:
             self.value = self.previous
+            self.action_end()
             self.refresh()
 
 
