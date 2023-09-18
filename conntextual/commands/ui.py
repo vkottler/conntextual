@@ -33,8 +33,8 @@ def ui_cmd(args: _Namespace) -> int:
     cli_args.append("arbiter")
     cli_args.extend(list(forward_flags(args, ["init_only"])))
 
-    cli_args.append(f"package://{args.package}/{args.variant}.yaml")
     cli_args.extend(args.configs)
+    cli_args.append(f"package://{args.package}/{args.variant}.yaml")
 
     print(f"runtimepy_main({cli_args})")
     return runtimepy_main(cli_args)

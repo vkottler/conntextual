@@ -32,6 +32,11 @@ DEFAULT_VALUE_COL_WIDTH = 25
 STALE_THRESHOLD_NS = to_nanos(0.5)
 
 
+def css_name(name: str) -> str:
+    """Replace some characters that don't work in identifier values."""
+    return name.replace(".", "_")
+
+
 class ChannelEnvironmentDisplay(Static):
     """A channel-environment interface element."""
 
@@ -86,12 +91,21 @@ class ChannelEnvironmentDisplay(Static):
 
         # Select channel.
         self.selected = self.channels_by_row[row]
-        self.selected.reset()
 
         # Update plot parameters.
-        plot = self.query_one(Plot)
-        plot.title = self.selected.name
-        plot.set_data(self.selected.timestamps, self.selected.values)
+        name = self.selected.name
+        self.query_one(Plot).title = name
+        self.model.logger.info("Switched plot to channel '%s'.", name)
+        self.reset_plot()
+
+    def reset_plot(self) -> None:
+        """Reset the selected plot."""
+
+        self.selected.reset()
+        self.query_one(Plot).set_data(
+            self.selected.timestamps, self.selected.values
+        )
+        self.model.logger.info("Plot reset.")
 
     @on(DataTable.CellSelected)
     def handle_cell_selected(self, event: DataTable.CellSelected) -> None:
@@ -166,7 +180,7 @@ class ChannelEnvironmentDisplay(Static):
     ) -> "ChannelEnvironmentDisplay":
         """Create a channel-environment display."""
 
-        result = ChannelEnvironmentDisplay(id=name)
+        result = ChannelEnvironmentDisplay(id=css_name(name))
         result.model = Model(name, env, source, logger, app)
         result.by_index = []
         result.channels_by_row = {}

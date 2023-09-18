@@ -94,6 +94,8 @@ async def tui_test(tui: Base) -> None:
             MockCellEvent(MockCoordinate(1)),  # type: ignore
         )
 
+        tui.action_refresh_plot()
+
         for command in [
             "test",
             "help",
