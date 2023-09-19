@@ -168,7 +168,7 @@ class Base(App[None]):
         self.model.environments += [
             ChannelEnvironmentDisplay.create(
                 name,
-                task.env,
+                task.command,
                 ChannelEnvironmentSource.TASK,
                 task.logger,
                 self.model.app,
@@ -179,7 +179,7 @@ class Base(App[None]):
         ] + [
             ChannelEnvironmentDisplay.create(
                 name,
-                conn.env,
+                conn.command,
                 ChannelEnvironmentSource.CONNECTION_LOCAL,
                 conn.logger,
                 self.model.app,
