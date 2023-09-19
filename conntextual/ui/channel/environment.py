@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple, Union
 # third-party
 from rich.text import Text
 from runtimepy.channel import AnyChannel
-from runtimepy.channel.environment import ChannelEnvironment
+from runtimepy.channel.environment.command import ChannelCommandProcessor
 from runtimepy.enum import RuntimeEnum
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.registry.name import RegistryKey
@@ -219,7 +219,7 @@ class ChannelEnvironmentDisplay(Static):
         log = ChannelEnvironmentLog()
         log.parent_name = self.model.name
         log.logger = self.model.logger
-        log.suggester = CommandSuggester.create(self.model.env, log.logger)
+        log.suggester = CommandSuggester.create(self.model.command)
         yield log
 
         with ScrollableContainer():
@@ -229,7 +229,7 @@ class ChannelEnvironmentDisplay(Static):
     @staticmethod
     def create(
         name: str,
-        env: ChannelEnvironment,
+        command: ChannelCommandProcessor,
         source: ChannelEnvironmentSource,
         logger: LoggerType,
         app: AppInfo,
@@ -238,19 +238,19 @@ class ChannelEnvironmentDisplay(Static):
         """Create a channel-environment display."""
 
         result = ChannelEnvironmentDisplay(id=css_name(name))
-        result.model = Model(name, env, source, logger, app)
+        result.model = Model(name, command, source, logger, app)
         result.by_index = []
         result.channels_by_row = {}
         result.row_idx = 0
         result.channel_pattern = channel_pattern
 
-        names = list(env.names)
+        names = list(result.model.env.names)
         assert names
 
         chan = None
         while chan is None:
             name = random.choice(names)
-            chan = env.get(name)
+            chan = result.model.env.get(name)
 
         result.selected = SelectedChannel.create(name, chan)
 
