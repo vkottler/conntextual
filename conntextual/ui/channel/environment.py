@@ -209,6 +209,8 @@ class ChannelEnvironmentDisplay(Static):
             yield Plot(
                 self.selected.timestamps,
                 self.selected.values,
+                str(self.model.app.config.get("plot_theme", "pro")),
+                str(self.model.app.config.get("plot_marker", "braille")),
                 title=self.selected.name,
                 id="plot",
             )

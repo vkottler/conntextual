@@ -7,3 +7,7 @@ factories:
 
 tasks:
   - {name: tui, factory: TuiDispatch, period_s: 0.1}
+
+config:
+  plot_theme: pro
+  plot_marker: braille
