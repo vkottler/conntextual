@@ -12,12 +12,12 @@ from textual.widgets import Static
 class Plot(Static):
     """A plot widget."""
 
-    theme = "pro"
-
     def __init__(
         self,
         x: ArrayLike,
         y: ArrayLike,
+        theme: str,
+        marker: str,
         *args,
         title: str = "under construction",
         **kwargs,
@@ -28,6 +28,8 @@ class Plot(Static):
         self.x = x
         self.y = y
         self.title = title
+        self.plot_theme = theme
+        self.plot_marker = marker
 
     def on_show(self) -> None:
         """Handle showing the plot."""
@@ -44,9 +46,9 @@ class Plot(Static):
 
         plt.clf()
 
-        plt.plot(self.x, self.y)
+        plt.plot(self.x, self.y, marker=self.plot_marker)
         plt.title(self.title)
-        plt.theme(self.theme)
+        plt.theme(self.plot_theme)
 
         plt.plotsize(self.size.width, self.size.height)
 
