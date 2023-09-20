@@ -10,10 +10,13 @@ from argparse import Namespace as _Namespace
 from runtimepy.commands.common import arbiter_args
 from runtimepy.entry import main as runtimepy_main
 from vcorelib.args import CommandFunction as _CommandFunction
+from vcorelib.io import ARBITER
 from vcorelib.logging import forward_flags
+from vcorelib.paths.context import tempfile
 
 # internal
 from conntextual import PKG_NAME
+from conntextual.server import server_args, server_config
 
 DEFAULT_VARIANT = "app"
 
@@ -25,8 +28,8 @@ def ui_cmd(args: _Namespace) -> int:
 
     flags = set(forward_flags(args, ["curses", "verbose", "no_uvloop"]))
 
-    # Don't initialize regular logging no matter what.
-    flags.add("--quiet")
+    if not args.verbose:
+        flags.add("--quiet")
 
     cli_args.extend(flags)
 
@@ -39,8 +42,15 @@ def ui_cmd(args: _Namespace) -> int:
     cli_args.extend(args.configs)
     cli_args.append(f"package://{args.package}/{args.variant}.yaml")
 
-    print(f"runtimepy_main({cli_args})")
-    return runtimepy_main(cli_args)
+    with tempfile(suffix=".json") as path:
+        assert ARBITER.encode(path, server_config(args))[0]
+        if not args.no_server:
+            cli_args.append(str(path))
+
+        print(f"runtimepy_main({cli_args})")
+        result = runtimepy_main(cli_args)
+
+    return result
 
 
 def add_ui_cmd(parser: _ArgumentParser) -> _CommandFunction:
@@ -59,6 +69,7 @@ def add_ui_cmd(parser: _ArgumentParser) -> _CommandFunction:
         default=DEFAULT_VARIANT,
         help="application variant to use (default: %(default)s)",
     )
+    server_args(parser)
 
     arbiter_args(parser, nargs="*")
 
