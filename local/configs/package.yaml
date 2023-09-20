@@ -22,6 +22,8 @@ dev_requirements:
   - types-setuptools
 
 commands:
+  - name: client
+    description: "attempt to connect a client to a remote session"
   - name: ui
     description: "run a user interface for runtimepy applications"
 
