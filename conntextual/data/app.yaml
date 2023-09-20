@@ -1,7 +1,4 @@
 ---
-includes:
-  - package://runtimepy/factories.yaml
-
 factories:
   - {name: conntextual.ui.task.TuiDispatch}
 
@@ -11,3 +8,6 @@ tasks:
 config:
   plot_theme: pro
   plot_marker: braille
+
+  tab_pattern:
+    exclude: "metrics"

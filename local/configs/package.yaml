@@ -9,7 +9,7 @@ no_logging_init: true
 # - "windows-curses; sys_platform == 'win32'"
 requirements:
   - psutil
-  - runtimepy>=2.10.4
+  - runtimepy>=2.11.1
   - textual
   - uvloop
   - plotext
@@ -22,6 +22,8 @@ dev_requirements:
   - types-setuptools
 
 commands:
+  - name: client
+    description: "attempt to connect a client to a remote session"
   - name: ui
     description: "run a user interface for runtimepy applications"
 

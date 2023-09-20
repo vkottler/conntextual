@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.3
-# hash=fffb56549200e052a1bc8f7fac716767
+# hash=f353fb494df76a27eff3f95cce1dd6b6
 # =====================================
 
 """
@@ -16,6 +16,7 @@ from typing import Tuple as _Tuple
 from vcorelib.args import CommandRegister as _CommandRegister
 
 # internal
+from conntextual.commands.client import add_client_cmd
 from conntextual.commands.ui import add_ui_cmd
 
 
@@ -23,6 +24,11 @@ def commands() -> _List[_Tuple[str, str, _CommandRegister]]:
     """Get this package's commands."""
 
     return [
+        (
+            "client",
+            "attempt to connect a client to a remote session",
+            add_client_cmd,
+        ),
         (
             "ui",
             "run a user interface for runtimepy applications",

@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=a4b7afbacd660c4b0555c1a156518778
+    hash=1b7c5dc77440c0af4cb2a6840061391c
     =====================================
 -->
 
-# conntextual ([1.2.4](https://pypi.org/project/conntextual/))
+# conntextual ([1.2.5](https://pypi.org/project/conntextual/))
 
 [![python](https://img.shields.io/pypi/pyversions/conntextual.svg)](https://pypi.org/project/conntextual/)
 ![Build Status](https://github.com/vkottler/conntextual/workflows/Python%20Package/badge.svg)
@@ -47,7 +47,7 @@ $ ./venv3.11/bin/conntextual -h
 
 usage: conntextual [-h] [--version] [-v] [-q] [--curses] [--no-uvloop]
                    [-C DIR]
-                   {ui,noop} ...
+                   {client,ui,noop} ...
 
 A network-application TUI using textual.
 
@@ -61,7 +61,8 @@ options:
   -C DIR, --dir DIR  execute from a specific directory
 
 commands:
-  {ui,noop}          set of available commands
+  {client,ui,noop}   set of available commands
+    client           attempt to connect a client to a remote session
     ui               run a user interface for runtimepy applications
     noop             command stub (does nothing)
 

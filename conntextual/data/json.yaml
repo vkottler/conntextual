@@ -5,10 +5,6 @@ clients:
     defer: true
     kwargs:
       remote_addr: [localhost, "$udp_json"]
-  - factory: udp_json
-    name: udp_json_server
-    kwargs:
-      local_addr: [localhost, "$udp_json"]
 
   - factory: tcp_json
     name: tcp_json_client
@@ -19,13 +15,3 @@ clients:
     name: websocket_json_client
     defer: true
     args: ["ws://localhost:$websocket_json"]
-
-servers:
-  - factory: tcp_json
-    kwargs:
-      port: "$tcp_json"
-
-  - factory: websocket_json
-    kwargs:
-      host: "0.0.0.0"
-      port: "$websocket_json"
