@@ -24,19 +24,26 @@ class TuiDispatchTask(ArbiterTask):
     def _add_housekeeping_metrics(self) -> None:
         """Initialize housekeeping metrics."""
 
-        with self.env.names_pushed("system"):
-            self.env.float_channel("memory_percent")
-            self.env.float_channel("cpu_percent")
+        self.env.float_channel("memory_percent")
+        self.env.float_channel("cpu_percent")
+
+        self.env.bool_channel("update_table", commandable=True)
+        self.env.bool_channel("update_log", commandable=True)
+        self.env.bool_channel("update_plot", commandable=True)
+
+        self.env.set("update_table", True)
+        self.env.set("update_log", True)
+        self.env.set("update_plot", True)
 
         self.process = psutil.Process()
 
     def poll_housekeeping(self) -> None:
         """Update housekeeping metrics."""
 
-        self.env.set("system.memory_percent", psutil.virtual_memory().percent)
+        self.env.set("memory_percent", psutil.virtual_memory().percent)
 
         with self.process.oneshot():
-            self.env.set("system.cpu_percent", self.process.cpu_percent())
+            self.env.set("cpu_percent", self.process.cpu_percent())
 
     async def init(self, app: AppInfo) -> None:
         """Initialize this task with application information."""
@@ -60,7 +67,11 @@ class TuiDispatchTask(ArbiterTask):
         """Dispatch an iteration of this task."""
 
         self.poll_housekeeping()
-        self.tui.dispatch()
+        self.tui.dispatch(
+            update_table=self.env.value("update_table"),  # type: ignore
+            update_log=self.env.value("update_log"),  # type: ignore
+            update_plot=self.env.value("update_plot"),  # type: ignore
+        )
 
         return True
 

@@ -8,3 +8,6 @@ tasks:
 config:
   plot_theme: pro
   plot_marker: braille
+
+  tab_pattern:
+    exclude: "metrics"

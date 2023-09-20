@@ -104,7 +104,12 @@ class Base(App[None]):
         """Get the tab container."""
         return self.query_one(".tabs", expect_type=TabbedContent)
 
-    def dispatch(self) -> None:
+    def dispatch(
+        self,
+        update_table: bool = True,
+        update_log: bool = True,
+        update_plot: bool = True,
+    ) -> None:
         """Update channel values."""
 
         self.model.uptime.value = (
@@ -114,7 +119,11 @@ class Base(App[None]):
         if not self.model.paused:
             env = self.current_channel_environment
             if env is not None:
-                env.update_channels()
+                env.update_channels(
+                    update_table=update_table,
+                    update_log=update_log,
+                    update_plot=update_plot,
+                )
 
     @property
     def current_channel_environment(
@@ -188,6 +197,14 @@ class Base(App[None]):
             for name, conn in self.model.app.connections.items()
             if self.ui_enabled(name)
         ]
+
+        # Ensure the TUI task is always first.
+        for idx, env in enumerate(self.model.environments):
+            if env.model.name == "tui":
+                self.model.environments[0], self.model.environments[idx] = (
+                    env,
+                    self.model.environments[0],
+                )
 
         # One indexed tabs automatically enumerate for the tabbed environment,
         # keep a mapping of tabs index to element identifier.

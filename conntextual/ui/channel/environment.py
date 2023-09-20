@@ -166,34 +166,43 @@ class ChannelEnvironmentDisplay(Static):
 
         self.switch_to_channel(event.coordinate.row)
 
-    def update_channels(self) -> None:
+    def update_channels(
+        self,
+        update_table: bool = True,
+        update_log: bool = True,
+        update_plot: bool = True,
+    ) -> None:
         """Update all channel values."""
 
         env = self.model.env
-        table = self.query_one(DataTable)
 
-        for coord, chan in self.by_index:
-            val = env.value(chan)
-            if isinstance(val, float):
-                val = f"{val: 15.6f}"
-            elif isinstance(val, bool):
-                val = "true" if val else "false"
-            elif isinstance(val, int):
-                val = f"{val: 8d}       "
+        if update_table:
+            table = self.query_one(DataTable)
 
-            # Get the age of the primitive.
-            age = env.age_ns(chan)
-            if age > STALE_THRESHOLD_NS:
-                val = Text(val, style="yellow")  # type: ignore
+            for coord, chan in self.by_index:
+                val = env.value(chan)
+                if isinstance(val, float):
+                    val = f"{val: 15.6f}"
+                elif isinstance(val, bool):
+                    val = "true" if val else "false"
+                elif isinstance(val, int):
+                    val = f"{val: 8d}       "
 
-            table.update_cell_at(coord, val)
+                # Get the age of the primitive.
+                age = env.age_ns(chan)
+                if age > STALE_THRESHOLD_NS:
+                    val = Text(val, style="yellow")  # type: ignore
+
+                table.update_cell_at(coord, val)
 
         # Update logs.
-        self.query_one(ChannelEnvironmentLog).dispatch()
+        if update_log:
+            self.query_one(ChannelEnvironmentLog).dispatch()
 
         # Update plot.
-        self.selected.poll()
-        self.query_one(Plot).dispatch()
+        if update_plot:
+            self.selected.poll()
+            self.query_one(Plot).dispatch()
 
     @property
     def label(self) -> str:
