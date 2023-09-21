@@ -4,43 +4,57 @@ A module implementing an include/exclude pattern matching interface.
 
 # built-in
 import re
-from typing import NamedTuple, Optional
+from typing import List, NamedTuple, Optional, Union
+
+PatternList = List[re.Pattern[str]]
+StringOrList = Union[str, List[str]]
 
 
 class PatternPair(NamedTuple):
     """A container for managing pattern data."""
 
-    include: Optional[re.Pattern[str]] = None
-    exclude: Optional[re.Pattern[str]] = None
+    includes: PatternList
+    excludes: PatternList
 
     def matches(self, data: str) -> bool:
         """Determine whether or not a string matches this pattern pair."""
 
-        result = True
+        include_result = True
 
-        if self.include is not None:
-            result = self.include.search(data) is not None
+        if self.includes:
+            include_result = any(
+                include.search(data) is not None for include in self.includes
+            )
 
-        if self.exclude is not None and result:
-            result = self.exclude.search(data) is not None
-            result = not result
+        exclude_result = False
 
-        return result
+        if include_result:
+            exclude_result = any(
+                exclude.search(data) is not None for exclude in self.excludes
+            )
+
+        return include_result and not exclude_result
 
     @staticmethod
-    def from_dict(data: dict[str, str]) -> "PatternPair":
+    def from_dict(data: dict[str, StringOrList]) -> "PatternPair":
         """Create a pattern pair from dictionary data."""
 
-        include: Optional[re.Pattern[str]] = data.get(  # type: ignore
-            "include",
-        )
-        if include:
-            include = re.compile(include)
+        includes: PatternList = []
+        excludes: PatternList = []
 
-        exclude: Optional[re.Pattern[str]] = data.get(  # type: ignore
-            "exclude",
-        )
-        if exclude:
-            exclude = re.compile(exclude)
+        for patterns, keys in zip(
+            [includes, excludes],
+            [
+                ["include", "includes", "included"],
+                ["exclude", "excludes", "excluded"],
+            ],
+        ):
+            for key in keys:
+                pattern: Optional[StringOrList] = data.get(key)
+                if pattern:
+                    if isinstance(pattern, str):
+                        patterns.append(re.compile(pattern))
+                    else:
+                        patterns += [re.compile(x) for x in pattern]
 
-        return PatternPair(include, exclude)
+        return PatternPair(includes, excludes)
