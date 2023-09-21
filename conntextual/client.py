@@ -11,7 +11,9 @@ from typing import Any
 from runtimepy.commands.common import arbiter_args
 
 
-def client_args(parser: _ArgumentParser) -> None:
+def client_args(
+    parser: _ArgumentParser, default_factory: str = "tcp_json"
+) -> None:
     """Add command-line argument options for servers."""
 
     parser.add_argument("host", help="hostname to connect to")
@@ -19,7 +21,7 @@ def client_args(parser: _ArgumentParser) -> None:
     parser.add_argument(
         "-f",
         "--factory",
-        default="tcp_json",
+        default=default_factory,
         help="connection factory to use (default: %(default)s)",
     )
 
