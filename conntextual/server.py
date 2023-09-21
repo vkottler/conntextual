@@ -12,42 +12,50 @@ from typing import Any
 from runtimepy.net import IPv4Host, get_free_socket_name
 
 
-def server_args(parser: _ArgumentParser) -> None:
+def server_args(
+    parser: _ArgumentParser,
+    default_udp_factory: str = "udp_json",
+    default_tcp_factory: str = "tcp_json",
+    default_websocket_factory: str = "websocket_json",
+    default_udp_port: int = 0,
+    default_tcp_port: int = 0,
+    default_websocket_port: int = 0,
+) -> None:
     """Add command-line argument options for servers."""
 
     parser.add_argument(
         "--udp",
-        default=0,
+        default=default_udp_port,
         type=int,
         help="JSON message server UDP port (default: %(default)d)",
     )
     parser.add_argument(
         "--udp-factory",
-        default="udp_json",
+        default=default_udp_factory,
         help="connection factory to use for UDP server (default: %(default)s)",
     )
 
     parser.add_argument(
         "--tcp",
-        default=0,
+        default=default_tcp_port,
         type=int,
         help="JSON message server TCP port (default: %(default)d)",
     )
     parser.add_argument(
         "--tcp-factory",
-        default="tcp_json",
+        default=default_tcp_factory,
         help="connection factory to use for UDP server (default: %(default)s)",
     )
 
     parser.add_argument(
         "--websocket",
-        default=0,
+        default=default_websocket_port,
         type=int,
         help="JSON message server WebSocket port (default: %(default)d)",
     )
     parser.add_argument(
         "--websocket-factory",
-        default="websocket_json",
+        default=default_websocket_factory,
         help=(
             "connection factory to use for WebSocket "
             "server (default: %(default)s)"

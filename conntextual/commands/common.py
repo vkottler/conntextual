@@ -19,7 +19,7 @@ def runtimepy_cli_args(args: _Namespace) -> List[str]:
 
     flags = set(forward_flags(args, ["curses", "verbose", "no_uvloop"]))
 
-    if not args.verbose:
+    if not args.verbose and not getattr(args, "variant", None) == "headless":
         flags.add("--quiet")
 
     cli_args.extend(flags)
