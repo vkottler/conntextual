@@ -52,6 +52,7 @@ class TuiDispatchTask(ArbiterTask):
         self.tui = Base.create(app, self.env)
 
         self._add_housekeeping_metrics()
+        self.env.finalize()
 
         # Create application task.
         self.tui_task = asyncio.create_task(

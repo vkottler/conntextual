@@ -10,4 +10,4 @@ config:
   plot_marker: braille
 
   tab_pattern:
-    exclude: "metrics"
+    exclude: ["metrics"]
