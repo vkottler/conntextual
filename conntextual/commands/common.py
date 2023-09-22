@@ -19,7 +19,9 @@ def runtimepy_cli_args(args: _Namespace) -> List[str]:
 
     flags = set(forward_flags(args, ["curses", "verbose", "no_uvloop"]))
 
-    if not args.verbose and not getattr(args, "variant", None) == "headless":
+    is_headless = getattr(args, "variant", None) == "headless"
+
+    if not args.verbose and not is_headless:
         flags.add("--quiet")
 
     cli_args.extend(flags)
@@ -27,8 +29,9 @@ def runtimepy_cli_args(args: _Namespace) -> List[str]:
     cli_args.append("arbiter")
     cli_args.extend(list(forward_flags(args, ["init_only"])))
 
-    # Always wait for the program to exit.
-    cli_args.append("-w")
+    # Only wait for the program to exit when in user-interface mode.
+    if not is_headless:
+        cli_args.append("-w")
 
     cli_args.extend(args.configs)
 
