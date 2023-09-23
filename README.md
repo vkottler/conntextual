@@ -2,11 +2,11 @@
     =====================================
     generator=datazen
     version=3.1.3
-    hash=3aec4b55213f3a045f072714cbdd153b
+    hash=80259471aaab48e1d301b2bf62ccde22
     =====================================
 -->
 
-# conntextual ([1.2.8](https://pypi.org/project/conntextual/))
+# conntextual ([1.2.9](https://pypi.org/project/conntextual/))
 
 [![python](https://img.shields.io/pypi/pyversions/conntextual.svg)](https://pypi.org/project/conntextual/)
 ![Build Status](https://github.com/vkottler/conntextual/workflows/Python%20Package/badge.svg)

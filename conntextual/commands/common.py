@@ -29,9 +29,10 @@ def runtimepy_cli_args(args: _Namespace) -> List[str]:
     cli_args.append("arbiter")
     cli_args.extend(list(forward_flags(args, ["init_only"])))
 
-    # Only wait for the program to exit when in user-interface mode.
-    if not is_headless:
-        cli_args.append("-w")
+    # Ensure that the application continues to run when running the user
+    # interface.
+    if not is_headless or args.wait_for_stop:
+        cli_args.append("--wait-for-stop")
 
     cli_args.extend(args.configs)
 
