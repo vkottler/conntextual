@@ -1,6 +1,7 @@
 psutil
 runtimepy>=2.12.3
 textual
+textual-plotext
 uvloop
-plotext
 numpy
+aiohttp>=3.9.0b0

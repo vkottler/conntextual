@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta:__legacy__"
 
 [project]
 name = "conntextual"
-version = "1.2.9"
+version = "1.2.10"
 description = "A network-application TUI using textual."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -16,6 +16,7 @@ maintainers = [
 ]
 classifiers = [
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Operating System :: MacOS",
   "Operating System :: POSIX :: Linux",
   "Operating System :: Unix",
@@ -38,7 +39,6 @@ test = [
   "sphinx",
   "sphinx-book-theme",
   "setuptools-wrapper",
-  "textual-dev",
   "types-psutil",
   "types-setuptools"
 ]

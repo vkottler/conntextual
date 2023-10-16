@@ -4,12 +4,10 @@ A module implementing a plot widget.
 
 # third-party
 from numpy.typing import ArrayLike
-import plotext as plt
-from rich.text import Text
-from textual.widgets import Static
+from textual_plotext import PlotextPlot
 
 
-class Plot(Static):
+class Plot(PlotextPlot):
     """A plot widget."""
 
     def __init__(
@@ -41,18 +39,18 @@ class Plot(Static):
 
         self.dispatch()
 
+    def on_mount(self) -> None:
+        """Initialize the plot."""
+
+        self.plt.title(self.title)
+        self.plt.theme(self.plot_theme)
+
     def dispatch(self) -> None:
         """Draw a new instance of the plot."""
 
-        plt.clf()
-
-        plt.plot(self.x, self.y, marker=self.plot_marker)
-        plt.title(self.title)
-        plt.theme(self.plot_theme)
-
-        plt.plotsize(self.size.width, self.size.height)
-
-        self.update(Text.from_ansi(plt.build()))
+        self.plt.clear_data()
+        self.plt.plot(self.x, self.y, marker=self.plot_marker)  # type: ignore
+        self.refresh()
 
     def set_data(self, x: ArrayLike, y: ArrayLike) -> None:
         """Assign new data."""
