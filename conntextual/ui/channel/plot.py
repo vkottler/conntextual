@@ -42,8 +42,16 @@ class Plot(PlotextPlot):
     def on_mount(self) -> None:
         """Initialize the plot."""
 
-        self.plt.title(self.title)
+        self.update_title()
         self.plt.theme(self.plot_theme)
+
+    def update_title(self, name: str = None) -> None:
+        """Update the plot's title."""
+
+        if name is not None:
+            self.title = name
+
+        self.plt.title(self.title)
 
     def dispatch(self) -> None:
         """Draw a new instance of the plot."""

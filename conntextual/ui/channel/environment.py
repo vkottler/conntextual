@@ -138,7 +138,7 @@ class ChannelEnvironmentDisplay(Static):
 
             # Update plot parameters.
             name = self.selected.name
-            self.query_one(Plot).title = name
+            self.query_one(Plot).update_title(name=name)
             self.model.logger.info("Switched plot to channel '%s'.", name)
             self.reset_plot()
 
