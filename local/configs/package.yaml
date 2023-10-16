@@ -11,13 +11,16 @@ requirements:
   - psutil
   - runtimepy>=2.12.3
   - textual
+  - textual-plotext
   - uvloop
-  - plotext
   - numpy
+  # Python 3.12 support: https://github.com/aio-libs/aiohttp/issues/7675.
+  - aiohttp>=3.9.0b0
 
+# Not using any features from this currently.
+# - textual-dev
 dev_requirements:
   - setuptools-wrapper
-  - textual-dev
   - types-psutil
   - types-setuptools
 

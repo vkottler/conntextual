@@ -39,7 +39,6 @@ test = [
   "sphinx",
   "sphinx-book-theme",
   "setuptools-wrapper",
-  "textual-dev",
   "types-psutil",
   "types-setuptools"
 ]

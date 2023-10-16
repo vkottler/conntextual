@@ -18,7 +18,7 @@ CONFIGS = ["package://conntextual/json.yaml"]
 def test_ui_curses():
     """Test user interfaces that require curses mode."""
 
-    with patch("runtimepy.commands.tui._curses.wrapper", new=wrapper_mock):
+    with patch("runtimepy.commands.common._curses.wrapper", new=wrapper_mock):
         args = [PKG_NAME, "--curses", "ui"]
         for variant in ["curses"]:
             assert (
