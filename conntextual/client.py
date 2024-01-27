@@ -25,7 +25,8 @@ def client_args(
         help="connection factory to use (default: %(default)s)",
     )
 
-    arbiter_args(parser, nargs="*")
+    with arbiter_args(parser, nargs="*"):
+        pass
 
 
 def client_config(args: _Namespace) -> dict[str, Any]:

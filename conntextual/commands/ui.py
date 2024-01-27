@@ -15,7 +15,11 @@ from vcorelib.paths.context import tempfile
 
 # internal
 from conntextual import PKG_NAME
-from conntextual.commands.common import DEFAULT_VARIANT, runtimepy_cli_args
+from conntextual.commands.common import (
+    DEFAULT_VARIANT,
+    common_cli_args,
+    runtimepy_cli_args,
+)
 from conntextual.server import server_args, server_config
 
 
@@ -53,8 +57,10 @@ def add_ui_cmd(parser: _ArgumentParser) -> _CommandFunction:
         default=DEFAULT_VARIANT,
         help="application variant to use (default: %(default)s)",
     )
+    common_cli_args(parser)
     server_args(parser)
 
-    arbiter_args(parser, nargs="*")
+    with arbiter_args(parser, nargs="*"):
+        pass
 
     return ui_cmd

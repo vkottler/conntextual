@@ -15,7 +15,11 @@ from vcorelib.paths.context import tempfile
 # internal
 from conntextual import PKG_NAME
 from conntextual.client import client_args, client_config
-from conntextual.commands.common import DEFAULT_VARIANT, runtimepy_cli_args
+from conntextual.commands.common import (
+    DEFAULT_VARIANT,
+    common_cli_args,
+    runtimepy_cli_args,
+)
 
 
 def client_cmd(args: _Namespace) -> int:
@@ -37,6 +41,7 @@ def client_cmd(args: _Namespace) -> int:
 def add_client_cmd(parser: _ArgumentParser) -> _CommandFunction:
     """Add client-command arguments to its parser."""
 
+    common_cli_args(parser)
     client_args(parser)
 
     return client_cmd
