@@ -21,15 +21,13 @@ def test_ui_curses():
     with patch("runtimepy.commands.common._curses.wrapper", new=wrapper_mock):
         args = [PKG_NAME, "--curses", "ui"]
         for variant in ["curses"]:
-            assert (
-                conntextual_main(
-                    args
-                    + ["--variant", variant]
-                    + CONFIGS
-                    + ["package://tests/valid/test.yaml"]
-                )
-                == 0
+            full_args = (
+                args
+                + ["--variant", variant]
+                + CONFIGS
+                + ["package://tests/valid/test.yaml"]
             )
+            assert conntextual_main(full_args) == 0
 
 
 def test_ui_command_basic():
