@@ -168,6 +168,7 @@ class ChannelEnvironmentDisplay(Static):
 
     def update_channels(
         self,
+        max_plot_samples: int,
         update_table: bool = True,
         update_log: bool = True,
         update_plot: bool = True,
@@ -201,7 +202,7 @@ class ChannelEnvironmentDisplay(Static):
 
         # Update plot.
         if update_plot:
-            self.selected.poll()
+            self.selected.poll(max_plot_samples)
             self.query_one(Plot).dispatch()
 
     @property
