@@ -61,6 +61,9 @@ class MockCellEvent:
 async def tui_test(tui: Base) -> None:
     """Test the UI."""
 
+    # Set this to a low value for coverage.
+    tui.model.env.set("max_plot_samples", 1)
+
     await tui.composed.wait()
 
     iterations = 2 * len(tui.model.environments)

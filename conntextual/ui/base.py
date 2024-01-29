@@ -106,6 +106,7 @@ class Base(App[None]):
 
     def dispatch(
         self,
+        max_plot_samples: int,
         update_table: bool = True,
         update_log: bool = True,
         update_plot: bool = True,
@@ -120,6 +121,7 @@ class Base(App[None]):
             env = self.current_channel_environment
             if env is not None:
                 env.update_channels(
+                    max_plot_samples,
                     update_table=update_table,
                     update_log=update_log,
                     update_plot=update_plot,

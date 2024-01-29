@@ -34,7 +34,7 @@ class SelectedChannel:
         self.values = []
         self.start_ns = default_time_ns()
 
-    def poll(self) -> None:
+    def poll(self, max_plot_samples: int) -> None:
         """Poll the underlying channel."""
 
         chan = self.channel[0]
@@ -44,3 +44,11 @@ class SelectedChannel:
         if (not self.timestamps) or last_updated > self.timestamps[-1]:
             self.timestamps.append((last_updated - self.start_ns) / 1e9)
             self.values.append(chan.raw.scaled)
+
+        # Check if there are more data points than the specified max. If so,
+        # remove the oldest data.
+        to_truncate = len(self.timestamps) - max_plot_samples
+        while to_truncate > 0:
+            self.values.pop(0)
+            self.timestamps.pop(0)
+            to_truncate -= 1

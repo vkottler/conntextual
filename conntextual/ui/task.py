@@ -13,6 +13,8 @@ from runtimepy.net.arbiter.task import ArbiterTask, TaskFactory
 # internal
 from conntextual.ui.base import Base
 
+DEFAULT_MAX_SAMPLES = 64
+
 
 class TuiDispatchTask(ArbiterTask):
     """A class implementing a periodic task for a textual TUI."""
@@ -30,6 +32,10 @@ class TuiDispatchTask(ArbiterTask):
         self.env.bool_channel("update_table", commandable=True)
         self.env.bool_channel("update_log", commandable=True)
         self.env.bool_channel("update_plot", commandable=True)
+
+        self.env.int_channel("max_plot_samples", commandable=True)
+
+        self.env.set("max_plot_samples", DEFAULT_MAX_SAMPLES)
 
         self.env.set("update_table", True)
         self.env.set("update_log", True)
@@ -69,6 +75,7 @@ class TuiDispatchTask(ArbiterTask):
 
         self.poll_housekeeping()
         self.tui.dispatch(
+            self.env.value("max_plot_samples"),  # type: ignore
             update_table=self.env.value("update_table"),  # type: ignore
             update_log=self.env.value("update_log"),  # type: ignore
             update_plot=self.env.value("update_plot"),  # type: ignore
