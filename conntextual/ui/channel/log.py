@@ -20,6 +20,7 @@ from vcorelib.logging import (
 
 # internal
 from conntextual.ui.channel.suggester import CommandSuggester
+from conntextual.util import css_name
 
 MAX_LINES = 1000
 
@@ -86,7 +87,7 @@ class ChannelEnvironmentLog(Static):
                 "set ",
                 classes="command_input",
                 suggester=self.suggester,
-                id=f"{self.parent_name}-input",
+                id=f"{css_name(self.parent_name)}-input",
             )
             input_box.previous = ""
             yield input_box
