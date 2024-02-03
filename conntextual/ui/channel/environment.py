@@ -29,16 +29,12 @@ from conntextual.ui.channel.pattern import PatternPair
 from conntextual.ui.channel.plot import Plot
 from conntextual.ui.channel.selected import SelectedChannel
 from conntextual.ui.channel.suggester import CommandSuggester
+from conntextual.util import css_name
 
 __all__ = ["ChannelEnvironmentDisplay"]
 COLUMNS = ["type", "name", "value"]
 DEFAULT_VALUE_COL_WIDTH = 22
 STALE_THRESHOLD_NS = to_nanos(0.5)
-
-
-def css_name(name: str) -> str:
-    """Replace some characters that don't work in identifier values."""
-    return name.replace(".", "_")
 
 
 class ChannelEnvironmentDisplay(Static):
