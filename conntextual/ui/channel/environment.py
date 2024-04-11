@@ -9,7 +9,9 @@ from typing import Dict, List, Optional, Tuple, Union
 # third-party
 from rich.text import Text
 from runtimepy.channel import AnyChannel
-from runtimepy.channel.environment.command import ChannelCommandProcessor
+from runtimepy.channel.environment.command.processor import (
+    ChannelCommandProcessor,
+)
 from runtimepy.enum import RuntimeEnum
 from runtimepy.net.arbiter import AppInfo
 from runtimepy.registry.name import RegistryKey

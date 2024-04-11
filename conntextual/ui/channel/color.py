@@ -7,7 +7,7 @@ from typing import Optional
 
 # third-party
 from runtimepy.enum import RuntimeEnum
-from runtimepy.primitives.type import AnyPrimitiveType
+from runtimepy.primitives.types import AnyPrimitiveType
 from textual._color_constants import COLOR_NAME_TO_RGB
 from textual.color import Color
 
