@@ -8,7 +8,9 @@ from enum import StrEnum
 
 # third-party
 from runtimepy.channel.environment import ChannelEnvironment
-from runtimepy.channel.environment.command import ChannelCommandProcessor
+from runtimepy.channel.environment.command.processor import (
+    ChannelCommandProcessor,
+)
 from runtimepy.net.arbiter import AppInfo
 from vcorelib.logging import LoggerType
 

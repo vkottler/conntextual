@@ -7,7 +7,9 @@ command widget.
 from typing import Optional
 
 # third-party
-from runtimepy.channel.environment.command import ChannelCommandProcessor
+from runtimepy.channel.environment.command.processor import (
+    ChannelCommandProcessor,
+)
 from textual.suggester import Suggester
 
 
