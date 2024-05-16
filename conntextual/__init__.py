@@ -1,7 +1,7 @@
 # =====================================
 # generator=datazen
 # version=3.1.4
-# hash=010f2975307c5e47995ef4bb32c47caf
+# hash=e87046a2e98422d8d716879f2dbe946f
 # =====================================
 
 """
@@ -10,4 +10,4 @@ Useful defaults and other package metadata.
 
 DESCRIPTION = "A network-application TUI using textual."
 PKG_NAME = "conntextual"
-VERSION = "1.3.3"
+VERSION = "1.3.4"
