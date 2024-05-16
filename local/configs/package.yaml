@@ -9,7 +9,7 @@ no_logging_init: true
 # - "windows-curses; sys_platform == 'win32'"
 requirements:
   - psutil
-  - runtimepy>=2.12.3
+  - runtimepy>=4.4.3
   - textual
   - textual-plotext
   - uvloop

@@ -28,7 +28,8 @@ def runtimepy_cli_args(args: _Namespace) -> List[str]:
     cli_args.extend(flags)
 
     cli_args.append(args.cmd)
-    cli_args.extend(list(forward_flags(args, ["init_only"])))
+
+    cli_args.extend(list(forward_flags(args, ["init_only", "no_poller"])))
 
     # Ensure that the application continues to run when running the user
     # interface.
