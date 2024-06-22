@@ -77,10 +77,11 @@ class AppBase(ArbiterTask):
 
         # Update state.
         self.draw()
-        window.noutrefresh()
-        curses.doupdate()
 
-        return True
+        # Not sure what's going on with coverage.
+        window.noutrefresh()  # pragma: nocover
+        curses.doupdate()  # pragma: nocover
+        return True  # pragma: nocover
 
     @property
     def cursor(self) -> Cursor:

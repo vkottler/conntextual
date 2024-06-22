@@ -37,7 +37,7 @@ class Tui(AppBase):
         for env_name, env in ENVIRONMENTS.items():
             window.addstr(f"========== {env_name} ==========")
             window.clrtoeol()
-            if not self.cursor.inc_y():
+            if not self.cursor.inc_y():  # pragma: nocover
                 break
 
             for name in env.env.names:

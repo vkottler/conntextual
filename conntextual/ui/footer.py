@@ -8,6 +8,7 @@ from typing import Optional, cast
 # third-party
 from rich.console import RenderableType
 from rich.text import Text
+from textual.renderables.blank import Blank
 from textual.widgets import Footer
 
 
@@ -25,7 +26,8 @@ class CustomFooter(Footer):
 
         if self.current_tab:
             result = Text.assemble(
-                result,
+                # Really dumb.
+                result if not isinstance(result, Blank) else "",
                 "| ",
                 Text(f"tab: {self.current_tab}", style="yellow bold"),
             )
