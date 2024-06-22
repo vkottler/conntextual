@@ -10,6 +10,7 @@ on:
 env:
   TWINE_PASSWORD: ${{secrets.TWINE_PASSWORD}}
   GITHUB_API_TOKEN: ${{secrets.API_TOKEN}}
+  CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
 
 jobs:
   build:
@@ -55,6 +56,10 @@ jobs:
           PY_TEST_EXTRA_ARGS: --cov-report=xml
 
       - uses: codecov/codecov-action@v3.1.5
+        with:
+          fail_ci_if_error: true
+          verbose: true
+          token: ${{secrets.CODECOV_TOKEN}}
 
       - run: mk pypi-upload-ci
         env:
@@ -67,7 +72,7 @@ jobs:
 
       - run: |
           mk python-release owner=vkottler \
-                            repo=conntextual version=1.3.4
+                            repo=conntextual version=1.3.5
         if: |
           matrix.python-version == '3.11'
           && matrix.system == 'ubuntu-latest'
